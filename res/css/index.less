@@ -1,0 +1,297 @@
+// Color definitions
+// Palette
+@dark-accent:               #161925ff;
+@dark:                      #23395bff;
+@primary:                   #406e8eff;
+@light:                     #8ea8c3ff;
+@accent:                    #cbf7edff;
+@white:                     #f0f0f0;
+@grey:                      #e0e0e0;
+@black:                     #333333;
+// Element specific
+@app-background-color:        @white;
+@app-bar-background-color:    @primary;
+@app-bar-font-color:          @white;
+
+// Shadows
+@box-shadow-low: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+@box-shadow-med: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+@box-shadow-high: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+
+// Font definitions
+// Families
+@body-font:                   'Roboto', serif;
+@title-font:                  'Baloo Paaji 2', serif;
+// Element specific
+@app-bar-font:                @title-font;
+@control-menu-font:           @body-font;
+
+// Dimension definitions
+// Standard distances 
+//      => Spacings
+@no-spacing:  0px;
+@xsm-spacing: 4px;
+@sml-spacing: 8px;
+@med-spacing: 16px;
+@lrg-spacing: 24px;
+@xlg-spacing: 32px;
+//      => Text Size
+@xsm-text: 12px;
+@sml-text: 16px;
+@med-text: 24px;
+@lrg-text: 32px;
+@xlg-text: 48px; 
+//      => Dimensions
+
+// Element specific
+@app-bar-padding: @sml-spacing;
+@app-bar-text: @med-text;
+@control-menu-padding: @sml-spacing @no-spacing;
+@control-menu-text: @xsm-text;
+@control-menu-el-spacing: @xsm-spacing @sml-spacing;
+@toolbar-padding: @med-spacing @sml-spacing;
+@toolbar-color: @primary;
+@toolbar-head-color: @primary;
+@default-box-size: 100px;
+@default-input-size: 25px;
+
+@contextmenu-background: @grey;
+@contextmenu-text: @control-menu-text;
+@contextmenu-el-padding: @xsm-spacing @sml-spacing;
+
+body {
+    padding: 0px !important;
+    margin: 0px !important;
+    background-color: @app-background-color;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+#app-bar {
+    background-color: @app-bar-background-color;
+    font-family: @app-bar-font;
+    font-size: @app-bar-text;
+    padding: @app-bar-padding;
+    color: @app-bar-font-color;
+}
+
+#control-menu {
+    padding: @control-menu-padding;
+    font-size: @control-menu-text;
+    font-family: @control-menu-font;
+    z-index: 100;
+
+    div {
+        position: relative;
+        display: inline-block;
+        div.label {
+            position: relative;
+            padding: @control-menu-el-spacing;
+            cursor: pointer;
+        
+            &:hover, &.selected {
+                background-color: @accent;
+                color: black;
+            }
+        }
+        div.sub-menu {
+            position: absolute;
+            background: @grey;
+            color: @black;
+            top: 100%;
+            overflow: hidden;
+            left: 0;
+            box-shadow: @box-shadow-low;
+            z-index: 101;
+
+            div {
+                padding: @xsm-spacing @sml-spacing;
+                cursor: pointer;
+                overflow: hidden;
+                white-space: nowrap;
+                width: 100%;
+                position: relative;
+
+                &:hover {
+                    background-color: @light;
+                    color: @black;
+                }
+            }
+        }
+    }
+}
+
+.workspace:not(.wrapper) {
+    flex-grow: 1;
+    position: relative;
+    z-index: 10;
+    overflow: hidden;
+}
+
+.block {
+    background-color: @black;
+    width: @default-box-size;
+    height: @default-box-size;
+    border-radius: 10px;
+    z-index: 1;
+    position: absolute;
+    mix-blend-mode: hard-light;
+    cursor: pointer;
+    opacity: 0.9;
+    transition: opacity 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+        opacity: 1;
+    }
+
+    .label {
+        color: @white;
+        font-size: 20px;
+        padding: 0;
+        line-height: 20px;
+        display: inline-block;
+        height:20px;
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Old versions of Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+                user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome, Opera and Firefox */
+    }
+
+    .input {
+        background-color: grey;
+        position: absolute;
+        z-index: 71;
+
+        &.top {
+            width: @default-input-size;
+            height: @default-input-size / 2;
+            
+            border-bottom-left-radius: @default-input-size / 2;
+            border-bottom-right-radius: @default-input-size / 2;
+        }
+
+        &.left {
+            width: @default-input-size / 2;
+            height: @default-input-size;
+            border-top-right-radius: @default-input-size / 2;
+            border-bottom-right-radius: @default-input-size / 2;
+        }
+        
+        &.bottom {
+            width: @default-input-size;
+            height: @default-input-size / 2;
+            border-top-left-radius: @default-input-size / 2;
+            border-top-right-radius: @default-input-size / 2;
+        }
+
+        &.right {
+            width: @default-input-size / 2;
+            height: @default-input-size;
+            border-top-left-radius: @default-input-size / 2;
+            border-bottom-left-radius: @default-input-size / 2;
+        }
+    }
+
+    .output {
+        background-color: @light;
+        width: @default-input-size;
+        height: @default-input-size;
+        border-radius: @default-input-size / 2;
+        position: absolute;
+        z-index: 80;
+        top: 0;
+        left: 0;
+    }
+}
+
+.wire {
+    border-color: black;
+    border-width: 3px;
+    border-style: solid;
+    z-index: 79;
+    position: absolute;
+    pointer-events: none;
+}
+
+#toolbar {
+    border: 2px solid @toolbar-color;
+
+    background-color: @grey;
+
+    height: 80%;
+    width: 100px;
+    position: absolute;
+    right: 20px;
+    bottom: 10%;
+    box-shadow: @box-shadow-med;
+    border-radius: @sml-spacing;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    overflow:hidden;
+
+    font-family: @body-font;
+
+    #toolbar-head {
+        background-color: @toolbar-head-color;
+        padding: @xsm-spacing @sml-spacing;
+        color: @white;
+        border-bottom: 2px solid @light;
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Old versions of Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+                user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome, Opera and Firefox */
+    }
+
+    #toolbar-pallette {
+        position: relative;
+        display:flex;
+        flex-wrap:wrap;
+        flex-direction:row;
+
+        .wrapper {
+            position: relative;
+            .block {
+                position: relative !important;
+            }
+        }
+    }
+}
+
+// Context menu
+.react-contextmenu {
+    background-color: @contextmenu-background;
+    font-size: @control-menu-text;
+    mix-blend-mode: none;
+    z-index: 100;
+    font-family: @body-font;
+    box-shadow: @box-shadow-low;
+
+    .react-contextmenu-item {
+        padding: @contextmenu-el-padding;
+        cursor: pointer;
+
+        &:hover {
+            background-color: @light;
+        }
+    }
+}

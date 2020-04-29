@@ -1,0 +1,6 @@
+{
+    "appName": "CryptoMaster",
+    "configurable": {
+        "gridSize": 50
+    } 
+}

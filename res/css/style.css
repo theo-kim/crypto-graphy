@@ -1,0 +1,221 @@
+body {
+  padding: 0px !important;
+  margin: 0px !important;
+  background-color: #f0f0f0;
+}
+#app {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+#app-bar {
+  background-color: #406e8eff;
+  font-family: 'Baloo Paaji 2', serif;
+  font-size: 24px;
+  padding: 8px;
+  color: #f0f0f0;
+}
+#control-menu {
+  padding: 8px 0px;
+  font-size: 12px;
+  font-family: 'Roboto', serif;
+  z-index: 100;
+}
+#control-menu div {
+  position: relative;
+  display: inline-block;
+}
+#control-menu div div.label {
+  position: relative;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+#control-menu div div.label:hover,
+#control-menu div div.label.selected {
+  background-color: #cbf7edff;
+  color: black;
+}
+#control-menu div div.sub-menu {
+  position: absolute;
+  background: #e0e0e0;
+  color: #333333;
+  top: 100%;
+  overflow: hidden;
+  left: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  z-index: 101;
+}
+#control-menu div div.sub-menu div {
+  padding: 4px 8px;
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+  position: relative;
+}
+#control-menu div div.sub-menu div:hover {
+  background-color: #8ea8c3ff;
+  color: #333333;
+}
+.workspace:not(.wrapper) {
+  flex-grow: 1;
+  position: relative;
+  z-index: 10;
+  overflow: hidden;
+}
+.block {
+  background-color: #333333;
+  width: 100px;
+  height: 100px;
+  border-radius: 10px;
+  z-index: 1;
+  position: absolute;
+  mix-blend-mode: hard-light;
+  cursor: pointer;
+  opacity: 0.9;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.block:hover {
+  opacity: 1;
+}
+.block .label {
+  color: #f0f0f0;
+  font-size: 20px;
+  padding: 0;
+  line-height: 20px;
+  display: inline-block;
+  height: 20px;
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Safari */
+  -khtml-user-select: none;
+  /* Konqueror HTML */
+  -moz-user-select: none;
+  /* Old versions of Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+                                    supported by Chrome, Opera and Firefox */
+}
+.block .input {
+  background-color: grey;
+  position: absolute;
+  z-index: 71;
+}
+.block .input.top {
+  width: 25px;
+  height: 12.5px;
+  border-bottom-left-radius: 12.5px;
+  border-bottom-right-radius: 12.5px;
+}
+.block .input.left {
+  width: 12.5px;
+  height: 25px;
+  border-top-right-radius: 12.5px;
+  border-bottom-right-radius: 12.5px;
+}
+.block .input.bottom {
+  width: 25px;
+  height: 12.5px;
+  border-top-left-radius: 12.5px;
+  border-top-right-radius: 12.5px;
+}
+.block .input.right {
+  width: 12.5px;
+  height: 25px;
+  border-top-left-radius: 12.5px;
+  border-bottom-left-radius: 12.5px;
+}
+.block .output {
+  background-color: #8ea8c3ff;
+  width: 25px;
+  height: 25px;
+  border-radius: 12.5px;
+  position: absolute;
+  z-index: 80;
+  top: 0;
+  left: 0;
+}
+.wire {
+  border-color: black;
+  border-width: 3px;
+  border-style: solid;
+  z-index: 79;
+  position: absolute;
+  pointer-events: none;
+}
+#toolbar {
+  border: 2px solid #406e8eff;
+  background-color: #e0e0e0;
+  height: 80%;
+  width: 100px;
+  position: absolute;
+  right: 20px;
+  bottom: 10%;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow: hidden;
+  font-family: 'Roboto', serif;
+}
+#toolbar #toolbar-head {
+  background-color: #406e8eff;
+  padding: 4px 8px;
+  color: #f0f0f0;
+  border-bottom: 2px solid #8ea8c3ff;
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Safari */
+  -khtml-user-select: none;
+  /* Konqueror HTML */
+  -moz-user-select: none;
+  /* Old versions of Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+                                    supported by Chrome, Opera and Firefox */
+}
+#toolbar #toolbar-pallette {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+#toolbar #toolbar-pallette .wrapper {
+  position: relative;
+}
+#toolbar #toolbar-pallette .wrapper .block {
+  position: relative !important;
+}
+.react-contextmenu {
+  background-color: #e0e0e0;
+  font-size: 12px;
+  mix-blend-mode: none;
+  z-index: 100;
+  font-family: 'Roboto', serif;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+.react-contextmenu .react-contextmenu-item {
+  padding: 4px 8px;
+  cursor: pointer;
+}
+.react-contextmenu .react-contextmenu-item:hover {
+  background-color: #8ea8c3ff;
+}
+
+
+/*# sourceMappingURL=style.css.map*/
