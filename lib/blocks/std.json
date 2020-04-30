@@ -1,4 +1,33 @@
 {
+    "Comparison Operators" : { 
+        "Equality" : {
+            "operation" : "std.EQ(0, 1)",
+            "description": "Performs a check for equality on two integers, returns a 1 or 0",
+            "label": "=",
+            "format": {
+                "size": [50, 50],
+                "inputs": [
+                    {
+                        "side": "top",
+                        "position": 1,
+                        "format": "int"
+                    },
+                    {
+                        "side": "bottom",
+                        "position": 1,
+                        "format": "int"
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "int"
+                    }
+                ]
+            }
+        }
+    },
     "Logic Gates" : {
         "XOR" : {
             "operation" : "std.XOR(0, 1)",
@@ -104,7 +133,7 @@
             }
         }
     },
-    "Arithmetic Gates" : {
+    "Arithmetic Operators" : {
         "ADD" : {
             "operation" : "std.ADD(0, 1)",
             "description": "Performs an addition on two integers, dropping any overflow bit.",
@@ -159,5 +188,159 @@
                 ]
             }
         }
+    },
+    "Hashing" : {
+        "MD5" : {
+            "operation" : "crypto.MD5(0)",
+            "description": "Hashes a variable length input into a 128-bit hash value.",
+            "label": "MD5",
+            "format": {
+                "size": [100, 50],
+                "inputs": [
+                    {
+                        "side": "left",
+                        "position": 1,
+                        "format": "int"
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "int"
+                    }
+                ]
+            }
+        },
+        "SHA1" : {
+            "operation" : "crypto.SHA1(0)",
+            "description": "Hashes a variable length input into a 160-bit hash value.",
+            "label": "SHA1",
+            "format": {
+                "size": [100, 50],
+                "inputs": [
+                    {
+                        "side": "left",
+                        "position": 1,
+                        "format": "int"
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "int"
+                    }
+                ]
+            }
+        },
+        "SHA256" : {
+            "operation" : "crypto.SHA256(0)",
+            "description": "Hashes a variable length input into a 256-bit hash value.",
+            "label": "SHA256",
+            "format": {
+                "size": [100, 50],
+                "inputs": [
+                    {
+                        "side": "left",
+                        "position": 1,
+                        "format": "int"
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "int"
+                    }
+                ]
+            }
+        }
+    },
+    "Pseudo-Randomness" : {
+        "Psuedo-Random Generator" : {
+            "operation" : "std.loop(crypto.PRG(0), 1)",
+            "description": "Uses a random seed to generate a deterministic sequence of pseudo-random numbers",
+            "label": "PRG",
+            "format": {
+                "size": [100, 50],
+                "inputs": [
+                    {
+                        "side": "left",
+                        "position": 1,
+                        "format": "int"
+                    },
+                    {
+                        "side": "top",
+                        "position": 2,
+                        "format": "int"
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "int"
+                    }
+                ]
+            }
+        },
+        "Pseudo-Random Function" : {
+            "operation" : "crypto.PRF(0, 1)",
+            "description": "Given a random key and an initialization value, produce a pseudo-random value of size X",
+            "label": "PRF",
+            "format": {
+                "size": [100, 50],
+                "inputs": [
+                    {
+                        "side": "left",
+                        "position": 1,
+                        "format": "int"
+                    },
+                    {
+                        "side": "top",
+                        "position": 2,
+                        "format": "int"
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "int"
+                    }
+                ]
+            }
+        },
+        "Pseudo-Random Permutation" : {
+            "operation" : "crypto.PRP(0, 1)",
+            "description": "Given a random key and an initialization value, produce a pseudo-random value of size X which is 1-to-1 mapped with the initialization value",
+            "label": "PRP",
+            "format": {
+                "size": [100, 50],
+                "inputs": [
+                    {
+                        "side": "left",
+                        "position": 1,
+                        "format": "int"
+                    },
+                    {
+                        "side": "top",
+                        "position": 2,
+                        "format": "int"
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "int"
+                    }
+                ]
+            }
+        }
+    },
+    "Symmetric Encryption" : {
+
     }
 }

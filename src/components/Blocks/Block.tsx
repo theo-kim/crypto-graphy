@@ -80,10 +80,10 @@ export default class Block extends React.Component<IProps, IState> {
         for (let i = 0; i < this.props.outputs.length; ++i) {
             if ((
                     (this.props.outputs[i].side == "top" || this.props.outputs[i].side == "bottom") &&
-                    Math.abs(this.props.outputs[i].index) > ySlots
+                    Math.abs(this.props.outputs[i].index) > xSlots
                 ) ||
                     (this.props.outputs[i].side == "left" || this.props.outputs[i].side == "right") &&
-                    Math.abs(this.props.outputs[i].index) > xSlots
+                    Math.abs(this.props.outputs[i].index) > ySlots
             ) {
                 console.error("Invalid position");
                 continue;
@@ -118,10 +118,10 @@ export default class Block extends React.Component<IProps, IState> {
         for (let i = 0; i < this.props.inputs.length; ++i) {
             if ((
                     (this.props.inputs[i].side == "top" || this.props.inputs[i].side == "bottom") &&
-                    Math.abs(this.props.inputs[i].index) > ySlots
+                    Math.abs(this.props.inputs[i].index) > xSlots
                 ) ||
                     (this.props.inputs[i].side == "left" || this.props.inputs[i].side == "right") &&
-                    Math.abs(this.props.inputs[i].index) > xSlots
+                    Math.abs(this.props.inputs[i].index) > ySlots
             ) {
                 console.error("Invalid position");
                 continue;
