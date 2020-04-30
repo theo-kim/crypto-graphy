@@ -93,7 +93,7 @@
 /*! exports provided: Comparison Operators, Logic Gates, Arithmetic Operators, Hashing, Pseudo-Randomness, Symmetric Encryption, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"Comparison Operators\":{\"Equality\":{\"operation\":\"std.EQ(0, 1)\",\"description\":\"Performs a check for equality on two integers, returns a 1 or 0\",\"label\":\"=\",\"format\":{\"size\":[50,50],\"inputs\":[{\"side\":\"top\",\"position\":1,\"format\":\"int\"},{\"side\":\"bottom\",\"position\":1,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}}},\"Logic Gates\":{\"XOR\":{\"operation\":\"std.XOR(0, 1)\",\"description\":\"Performs an bitwise exclusive or on two integers.\",\"label\":\"⊕\",\"format\":{\"size\":[50,50],\"inputs\":[{\"side\":\"top\",\"position\":1,\"format\":\"int\"},{\"side\":\"bottom\",\"position\":1,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}},\"OR\":{\"operation\":\"std.OR(0, 1)\",\"description\":\"Performs a bitwise or on two integers.\",\"label\":\"∨\",\"format\":{\"size\":[50,50],\"inputs\":[{\"side\":\"top\",\"position\":1,\"format\":\"int\"},{\"side\":\"bottom\",\"position\":1,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}},\"AND\":{\"operation\":\"std.AND(0, 1)\",\"description\":\"Performs a bitwise and on two integers.\",\"label\":\"∧\",\"format\":{\"size\":[50,50],\"inputs\":[{\"side\":\"top\",\"position\":1,\"format\":\"int\"},{\"side\":\"bottom\",\"position\":1,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}},\"NOT\":{\"operation\":\"std.NOT(0)\",\"description\":\"Performs a bitwise not (i.e. compliment) on one integer.\",\"label\":\"~\",\"format\":{\"size\":[50,50],\"inputs\":[{\"side\":\"left\",\"position\":1,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}}},\"Arithmetic Operators\":{\"ADD\":{\"operation\":\"std.ADD(0, 1)\",\"description\":\"Performs an addition on two integers, dropping any overflow bit.\",\"label\":\"+\",\"format\":{\"size\":[50,50],\"inputs\":[{\"side\":\"top\",\"position\":1,\"format\":\"int\"},{\"side\":\"bottom\",\"position\":1,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}},\"SUB\":{\"operation\":\"std.SUB(0, 1)\",\"description\":\"Performs a subtraction on two integers, dropping any overflow bit.\",\"label\":\"-\",\"format\":{\"size\":[50,50],\"inputs\":[{\"side\":\"top\",\"position\":1,\"format\":\"int\"},{\"side\":\"bottom\",\"position\":1,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}}},\"Hashing\":{\"MD5\":{\"operation\":\"crypto.MD5(0)\",\"description\":\"Hashes a variable length input into a 128-bit hash value.\",\"label\":\"MD5\",\"format\":{\"size\":[100,50],\"inputs\":[{\"side\":\"left\",\"position\":1,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}},\"SHA1\":{\"operation\":\"crypto.SHA1(0)\",\"description\":\"Hashes a variable length input into a 160-bit hash value.\",\"label\":\"SHA1\",\"format\":{\"size\":[100,50],\"inputs\":[{\"side\":\"left\",\"position\":1,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}},\"SHA256\":{\"operation\":\"crypto.SHA256(0)\",\"description\":\"Hashes a variable length input into a 256-bit hash value.\",\"label\":\"SHA256\",\"format\":{\"size\":[100,50],\"inputs\":[{\"side\":\"left\",\"position\":1,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}}},\"Pseudo-Randomness\":{\"Psuedo-Random Generator\":{\"operation\":\"std.loop(crypto.PRG(0), 1)\",\"description\":\"Uses a random seed to generate a deterministic sequence of pseudo-random numbers\",\"label\":\"PRG\",\"format\":{\"size\":[100,50],\"inputs\":[{\"side\":\"left\",\"position\":1,\"format\":\"int\"},{\"side\":\"top\",\"position\":2,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}},\"Pseudo-Random Function\":{\"operation\":\"crypto.PRF(0, 1)\",\"description\":\"Given a random key and an initialization value, produce a pseudo-random value of size X\",\"label\":\"PRF\",\"format\":{\"size\":[100,50],\"inputs\":[{\"side\":\"left\",\"position\":1,\"format\":\"int\"},{\"side\":\"top\",\"position\":2,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}},\"Pseudo-Random Permutation\":{\"operation\":\"crypto.PRP(0, 1)\",\"description\":\"Given a random key and an initialization value, produce a pseudo-random value of size X which is 1-to-1 mapped with the initialization value\",\"label\":\"PRP\",\"format\":{\"size\":[100,50],\"inputs\":[{\"side\":\"left\",\"position\":1,\"format\":\"int\"},{\"side\":\"top\",\"position\":2,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}}},\"Symmetric Encryption\":{}}");
+module.exports = JSON.parse("{\"Comparison Operators\":{\"Equality\":{\"operation\":\"std.EQ(0, 1, util.len(0))\",\"description\":\"Performs a check for equality on two integers, returns a 1 or 0\",\"label\":\"=\",\"format\":{\"size\":[50,50],\"inputs\":[{\"side\":\"top\",\"position\":1,\"format\":\"bytearr\"},{\"side\":\"bottom\",\"position\":1,\"format\":\"bytearr\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"bytearr\"}]}},\"Inequality\":{\"operation\":\"std.EQ(0, 1, util.len(0))\",\"description\":\"Performs a check for inequality on two integers, returns a 1 or 0\",\"label\":\"≠\",\"format\":{\"size\":[50,50],\"inputs\":[{\"side\":\"top\",\"position\":1,\"format\":\"bytearr\"},{\"side\":\"bottom\",\"position\":1,\"format\":\"bytearr\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"bytearr\"}]}}},\"Logic Gates\":{\"XOR\":{\"operation\":\"std.XOR(0, 1, util.len(0), 2)\",\"description\":\"Performs an bitwise exclusive or on two integers.\",\"label\":\"⊕\",\"format\":{\"size\":[50,50],\"inputs\":[{\"side\":\"top\",\"position\":1,\"format\":\"bytearr\"},{\"side\":\"bottom\",\"position\":1,\"format\":\"bytearr\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"bytearr\"}]}},\"OR\":{\"operation\":\"std.OR(0, 1, util.len(0), 2)\",\"description\":\"Performs a bitwise or on two integers.\",\"label\":\"∨\",\"format\":{\"size\":[50,50],\"inputs\":[{\"side\":\"top\",\"position\":1,\"format\":\"bytearr\"},{\"side\":\"bottom\",\"position\":1,\"format\":\"bytearr\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"bytearr\"}]}},\"AND\":{\"operation\":\"std.AND(0, 1, util.len(0), 2)\",\"description\":\"Performs a bitwise and on two integers.\",\"label\":\"∧\",\"format\":{\"size\":[50,50],\"inputs\":[{\"side\":\"top\",\"position\":1,\"format\":\"bytearr\"},{\"side\":\"bottom\",\"position\":1,\"format\":\"bytearr\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"bytearr\"}]}},\"NOT\":{\"operation\":\"std.NOT(0, util.len(0), 1)\",\"description\":\"Performs a bitwise not (i.e. compliment) on one integer.\",\"label\":\"~\",\"format\":{\"size\":[50,50],\"inputs\":[{\"side\":\"left\",\"position\":1,\"format\":\"bytearr\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"bytearr\"}]}}},\"Arithmetic Operators\":{\"ADD\":{\"operation\":\"std.ADD(0, 1)\",\"description\":\"Performs an addition on two integers, dropping any overflow bit.\",\"label\":\"+\",\"format\":{\"size\":[50,50],\"inputs\":[{\"side\":\"top\",\"position\":1,\"format\":\"int\"},{\"side\":\"bottom\",\"position\":1,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}},\"SUB\":{\"operation\":\"std.SUB(0, 1)\",\"description\":\"Performs a subtraction on two integers, dropping any overflow bit.\",\"label\":\"-\",\"format\":{\"size\":[50,50],\"inputs\":[{\"side\":\"top\",\"position\":1,\"format\":\"int\"},{\"side\":\"bottom\",\"position\":1,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}}},\"Hashing\":{\"MD5\":{\"operation\":\"crypto.MD5(0)\",\"description\":\"Hashes a variable length input into a 128-bit hash value.\",\"label\":\"MD5\",\"format\":{\"size\":[100,50],\"inputs\":[{\"side\":\"left\",\"position\":1,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}},\"SHA1\":{\"operation\":\"crypto.SHA1(0)\",\"description\":\"Hashes a variable length input into a 160-bit hash value.\",\"label\":\"SHA1\",\"format\":{\"size\":[100,50],\"inputs\":[{\"side\":\"left\",\"position\":1,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}},\"SHA256\":{\"operation\":\"crypto.SHA256(0)\",\"description\":\"Hashes a variable length input into a 256-bit hash value.\",\"label\":\"SHA256\",\"format\":{\"size\":[100,50],\"inputs\":[{\"side\":\"left\",\"position\":1,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}}},\"Pseudo-Randomness\":{\"Psuedo-Random Generator\":{\"operation\":\"std.loop(crypto.PRG(0), 1)\",\"description\":\"Uses a random seed to generate a deterministic sequence of pseudo-random numbers\",\"label\":\"PRG\",\"format\":{\"size\":[100,50],\"inputs\":[{\"side\":\"left\",\"position\":1,\"format\":\"int\"},{\"side\":\"top\",\"position\":2,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}},\"Pseudo-Random Function\":{\"operation\":\"crypto.PRF(0, 1)\",\"description\":\"Given a random key and an initialization value, produce a pseudo-random value of size X\",\"label\":\"PRF\",\"format\":{\"size\":[100,50],\"inputs\":[{\"side\":\"left\",\"position\":1,\"format\":\"int\"},{\"side\":\"top\",\"position\":2,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}},\"Pseudo-Random Permutation\":{\"operation\":\"crypto.PRP(0, 1)\",\"description\":\"Given a random key and an initialization value, produce a pseudo-random value of size X which is 1-to-1 mapped with the initialization value\",\"label\":\"PRP\",\"format\":{\"size\":[100,50],\"inputs\":[{\"side\":\"left\",\"position\":1,\"format\":\"int\"},{\"side\":\"top\",\"position\":2,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}}},\"Symmetric Encryption\":{\"AES\":{\"operation\":\"encrypt.AES(0, 1)\",\"description\":\"Given a random key and an initialization value, produce a pseudo-random value of size X which is 1-to-1 mapped with the initialization value\",\"label\":\"AES\",\"format\":{\"size\":[100,100],\"inputs\":[{\"side\":\"top\",\"position\":2,\"format\":\"int\"},{\"side\":\"left\",\"position\":1,\"format\":\"int\"},{\"side\":\"left\",\"position\":3,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":2,\"format\":\"int\"}]}},\"DES\":{\"operation\":\"encrypt.DES(0, 1)\",\"description\":\"Given a random key and an initialization value, produce a pseudo-random value of size X which is 1-to-1 mapped with the initialization value\",\"label\":\"DES\",\"format\":{\"size\":[100,100],\"inputs\":[{\"side\":\"left\",\"position\":1,\"format\":\"int\"},{\"side\":\"left\",\"position\":3,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":2,\"format\":\"int\"}]}},\"One Time Pad\":{\"operation\":\"encrypt.OTP(0, 1)\",\"description\":\"Given a random key and an initialization value, produce a pseudo-random value of size X which is 1-to-1 mapped with the initialization value\",\"label\":\"OTP\",\"format\":{\"size\":[100,50],\"inputs\":[{\"side\":\"top\",\"position\":2,\"format\":\"int\"},{\"side\":\"bottom\",\"position\":2,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}}}}");
 
 /***/ }),
 
@@ -34074,12 +34074,11 @@ var AppBar = /** @class */ (function (_super) {
 /*!********************************************!*\
   !*** ./src/components/Blocks/AppBlock.tsx ***!
   \********************************************/
-/*! exports provided: blockTemplates, AppBlock, AppBlockFactory, IconBlock, IconBlockFactory, BlockTemplateFactory */
+/*! exports provided: AppBlock, AppBlockFactory, IconBlock, IconBlockFactory, BlockTemplateFactory */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "blockTemplates", function() { return blockTemplates; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AppBlock", function() { return AppBlock; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AppBlockFactory", function() { return AppBlockFactory; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "IconBlock", function() { return IconBlock; });
@@ -34123,38 +34122,6 @@ var slot = function (side, index) {
         connected: false,
     };
 };
-// sizes
-var smallBlockSize = [50, 50];
-var mediumBlockSize = [100, 100];
-var largeBlockSize = [200, 200];
-var block2i1o = function () {
-    return {
-        inputs: [slot("top", 1), slot("bottom", 1)],
-        outputs: [slot("right", 1)],
-        size: smallBlockSize
-    };
-};
-var block1i1o = function () {
-    return {
-        inputs: [slot("left", 1)],
-        outputs: [slot("right", 1)],
-        size: smallBlockSize,
-    };
-};
-var block1o = function (side) {
-    return {
-        inputs: [],
-        outputs: [slot(side, 1)],
-        size: smallBlockSize,
-    };
-};
-var block2i = function () {
-    return {
-        inputs: [slot("right", 1), slot("left", 1)],
-        outputs: [],
-        size: smallBlockSize,
-    };
-};
 function BlockTemplateFactory(format) {
     return {
         inputs: format.inputs.map(function (input) { return slot(input.side, input.position); }),
@@ -34162,12 +34129,6 @@ function BlockTemplateFactory(format) {
         size: [format.size[0], format.size[1]],
     };
 }
-var blockTemplates = {
-    block1i1o: block1i1o,
-    block2i1o: block2i1o,
-    block1o: block1o,
-    block2i: block2i,
-};
 var AppBlock = /** @class */ (function (_super) {
     __extends(AppBlock, _super);
     function AppBlock(props) {
@@ -34183,7 +34144,7 @@ var AppBlock = /** @class */ (function (_super) {
             var n = this.props.connectedOutputs[i];
             this.props.template.outputs[n].connected = true;
         }
-        return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_Block__WEBPACK_IMPORTED_MODULE_1__["default"], __assign({}, this.props.template, { label: this.props.label, onInit: function (block, type, inputs) { _this.props.onInit(block, _this.props.type, inputs); }, onBlockMove: this.props.onBlockMove, onWireMove: this.props.onWireMove, onDestroy: this.props.onDestroy, onMoveWithConnectedWire: this.props.onMoveWithConnectedWire, onDrag: this.props.onDrag, id: this.props.id, dead: false, position: this.props.position })));
+        return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_Block__WEBPACK_IMPORTED_MODULE_1__["default"], __assign({}, this.props.template, { label: this.props.label, onInit: function (block, type, inputs) { _this.props.onInit(block, _this.props.type, inputs); }, onBlockMove: this.props.onBlockMove, onWireMove: this.props.onWireMove, onDestroy: this.props.onDestroy, onMoveWithConnectedWire: this.props.onMoveWithConnectedWire, onDrag: this.props.onDrag, id: this.props.id, dead: false, zoom: this.props.zoom, position: this.props.position })));
     };
     return AppBlock;
 }(react__WEBPACK_IMPORTED_MODULE_0__["Component"]));
@@ -34193,7 +34154,7 @@ var IconBlock = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     IconBlock.prototype.render = function () {
-        return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_Block__WEBPACK_IMPORTED_MODULE_1__["default"], __assign({}, this.props.template, { label: this.props.label, onInit: function () { }, onBlockMove: function () { }, onWireMove: function () { }, onDestroy: function () { }, onMoveWithConnectedWire: function () { return []; }, onDrag: function () { }, id: 0, dead: true, position: [this.props.template.size[0] / 2, this.props.template.size[1] / 2] })));
+        return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_Block__WEBPACK_IMPORTED_MODULE_1__["default"], __assign({}, this.props.template, { label: this.props.label, onInit: function () { }, onBlockMove: function () { }, onWireMove: function () { }, onDestroy: function () { }, onMoveWithConnectedWire: function () { return []; }, onDrag: function () { }, id: 0, dead: true, zoom: 1, position: [this.props.template.size[0] / 2, this.props.template.size[1] / 2] })));
     };
     return IconBlock;
 }(react__WEBPACK_IMPORTED_MODULE_0__["Component"]));
@@ -34265,6 +34226,50 @@ Object.keys(blockLibrary).forEach(function (category) {
         StdBlocks[category][blockName] = BlockLoader(category, blockName, blockLibrary[category][blockName]);
     });
 });
+// Non-library blocks
+function Eavesdropper(props) {
+    var factory = Object(_AppBlock__WEBPACK_IMPORTED_MODULE_2__["AppBlockFactory"])({
+        inputs: [{
+                side: "left",
+                index: 1,
+                connected: false,
+            }],
+        outputs: [{
+                side: "right",
+                index: 1,
+                connected: false,
+            }],
+        size: [50, 50],
+    }, "E", this, props);
+    return factory;
+}
+function Bob(props) {
+    var factory = Object(_AppBlock__WEBPACK_IMPORTED_MODULE_2__["AppBlockFactory"])({
+        inputs: [{
+                side: "left",
+                index: 1,
+                connected: false,
+            }],
+        outputs: [],
+        size: [50, 50],
+    }, "B", this, props);
+    return factory;
+}
+function Alice(props) {
+    var factory = Object(_AppBlock__WEBPACK_IMPORTED_MODULE_2__["AppBlockFactory"])({
+        outputs: [{
+                side: "right",
+                index: 1,
+                connected: false,
+            }],
+        inputs: [],
+        size: [50, 50],
+    }, "A", this, props);
+    return factory;
+}
+StdBlocks["Inputs"] = { Alice: Alice };
+StdBlocks["Outputs"] = { Bob: Bob };
+StdBlocks["Adversaries"] = { Eavesdropper: Eavesdropper };
 
 /* harmony default export */ __webpack_exports__["default"] = (StdBlocks);
 
@@ -34376,8 +34381,8 @@ var Block = /** @class */ (function (_super) {
             globalPosition[1] += _this.state.posY - (_this.props.size[1] / 2);
             _this.props.onWireMove(_this.props.id, index, globalPosition);
         };
-        var xSlots = Math.floor(_this.props.size[0] / 50);
-        var ySlots = Math.floor(_this.props.size[1] / 50);
+        var xSlots = Math.floor(_this.props.size[0] / 25);
+        var ySlots = Math.floor(_this.props.size[1] / 25);
         _this.state = {
             posX: _this.props.size[0] / 2 + _this.props.position[0],
             posY: _this.props.size[1] / 2 + _this.props.position[1],
@@ -34457,6 +34462,9 @@ var Block = /** @class */ (function (_super) {
                 return true;
             }
         }
+        if (nextProps.zoom != this.props.zoom) {
+            return true;
+        }
         // Or check if the state changed
         // Change the output handle needs a rerender of the wire
         for (var i = 0; i < this.state.outputPosEnd.length; ++i) {
@@ -34483,10 +34491,8 @@ var Block = /** @class */ (function (_super) {
         var _this = this;
         var wireRenderList = this.forceWireRender;
         this.forceWireRender = [];
-        return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_draggable__WEBPACK_IMPORTED_MODULE_2___default.a
-        // disabled={this.props.dead}
-        , { 
-            // disabled={this.props.dead}
+        return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_draggable__WEBPACK_IMPORTED_MODULE_2___default.a, { disabled: this.props.dead, 
+            // scale={this.props.zoom}
             bounds: ".workspace", cancel: ".output, .wire", grid: [_appInfo_json__WEBPACK_IMPORTED_MODULE_4__["configurable"].gridSize, _appInfo_json__WEBPACK_IMPORTED_MODULE_4__["configurable"].gridSize], onStop: this.dragHandler, onDrag: this.checkConnectedHandler, defaultPosition: { x: this.props.position[0] - (this.props.size[0] / 2), y: this.props.position[1] - (this.props.size[1] / 2) } },
             react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { className: "block", style: {
                     width: this.props.size[0],
@@ -34733,15 +34739,18 @@ var ToolBar = /** @class */ (function (_super) {
             react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { id: "toolbar" },
                 react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { id: "toolbar-head" }, "Toolbar"),
                 react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { id: "toolbar-pallette" }, Object.keys(_Blocks_BasicBlocks__WEBPACK_IMPORTED_MODULE_2__["default"]).map(function (category, catIndex) {
+                    if (category === "Inputs" || category === "Outputs") {
+                        return null;
+                    }
                     var packageBlocks = Object.keys(_Blocks_BasicBlocks__WEBPACK_IMPORTED_MODULE_2__["default"][category]).map(function (blockName, index) {
                         var $blockType = _Blocks_BasicBlocks__WEBPACK_IMPORTED_MODULE_2__["default"][category][blockName];
-                        return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { onMouseDown: function (e) { _this.props.onNewBlock($blockType, [e.clientX, e.clientY]); }, style: { transform: "scale(0.5)" }, className: "wrapper", key: index },
+                        return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { onMouseDown: function (e) { _this.props.onNewBlock($blockType, [e.clientX, e.clientY]); }, className: "wrapper", key: index },
                             react__WEBPACK_IMPORTED_MODULE_0__["createElement"]($blockType, { icon: true })));
                     });
                     return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { className: "toolbar-section", key: catIndex },
                         react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { className: "toolbar-section-name" }, category),
                         packageBlocks));
-                })))));
+                }).filter(function (val) { return val !== null; })))));
     };
     ;
     return ToolBar;
@@ -35275,6 +35284,16 @@ var WorkSpace = /** @class */ (function (_super) {
             var description = loader.description;
             alert(description);
         };
+        _this.zoomIn = function () {
+            _this.setState({
+                zoom: _this.state.zoom + 0.1,
+            });
+        };
+        _this.zoomOut = function () {
+            _this.setState({
+                zoom: _this.state.zoom - 0.1,
+            });
+        };
         _this.WorkSpaceController = {
             onWireMove: _this.trackWireEnds,
             onBlockMove: _this.trackBlocks,
@@ -35284,8 +35303,8 @@ var WorkSpace = /** @class */ (function (_super) {
             onDrag: _this.updateDependencies
         };
         _this.defaultBlocks = [
-            { construct: _Blocks_BasicBlocks__WEBPACK_IMPORTED_MODULE_2__["StdBlocks"]["Logic Gates"]["XOR"], initialPosition: [100, 100] },
-            { construct: _Blocks_BasicBlocks__WEBPACK_IMPORTED_MODULE_2__["StdBlocks"]["Logic Gates"]["AND"], initialPosition: [300, 100] },
+            { construct: _Blocks_BasicBlocks__WEBPACK_IMPORTED_MODULE_2__["StdBlocks"]["Inputs"]["Alice"], initialPosition: [100, 100] },
+            { construct: _Blocks_BasicBlocks__WEBPACK_IMPORTED_MODULE_2__["StdBlocks"]["Outputs"]["Bob"], initialPosition: [300, 100] },
         ];
         _this.domRef = null;
         _this.state = {
@@ -35294,6 +35313,7 @@ var WorkSpace = /** @class */ (function (_super) {
             blocks: [],
             blockElements: __spreadArrays(_this.defaultBlocks),
             pendingWireMoveEvent: { wire: -1 },
+            zoom: 1,
         };
         return _this;
     }
@@ -35315,25 +35335,29 @@ var WorkSpace = /** @class */ (function (_super) {
     WorkSpace.prototype.render = function () {
         var _this = this;
         // console.log("Workspace render");
-        return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { className: "workspace", ref: function (c) { return _this.domRef = c; } },
-            this.state.blockElements.map(function ($value, index) {
-                if ($value == null) {
-                    return null;
-                }
-                return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["ContextMenuTrigger"], { key: index, id: "block-" + index },
-                    react__WEBPACK_IMPORTED_MODULE_0__["createElement"]($value.construct, __assign({ id: index, position: $value.initialPosition, connectedInputs: [], connectedOutputs: _this.state.graph.getConnectedOutputs(index) }, _this.WorkSpaceController))));
-            }).filter(function (el) {
-                if (el == null)
-                    return false;
-                return true;
-            }),
-            this.state.blockElements.map(function ($value, index) {
-                return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["ContextMenu"], { key: index, id: "block-" + index },
-                    react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["MenuItem"], { data: { key: index }, onClick: _this.deleteBlockHandler }, "Delete Block"),
-                    react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["MenuItem"], { data: { key: index }, onClick: function (e, data, target) { _this.toolbarNewBlockHandler(_this.state.blockElements[data.key].construct); } }, "Duplicate Block"),
-                    react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["MenuItem"], { data: { key: index }, onClick: _this.showBlockInfoHandler }, "Block Info")));
-            }),
-            react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_ToolBar__WEBPACK_IMPORTED_MODULE_3__["default"], { onNewBlock: this.toolbarNewBlockHandler })));
+        return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["ContextMenuTrigger"], { id: "workspace", attributes: { className: "workspace" } },
+            react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { className: "zoom-controller", style: { transform: "scale(" + this.state.zoom + ")" }, ref: function (c) { return _this.domRef = c; } },
+                this.state.blockElements.map(function ($value, index) {
+                    if ($value == null) {
+                        return null;
+                    }
+                    return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["ContextMenuTrigger"], { key: index, id: "block-" + index },
+                        react__WEBPACK_IMPORTED_MODULE_0__["createElement"]($value.construct, __assign({ id: index, position: $value.initialPosition, connectedInputs: [], connectedOutputs: _this.state.graph.getConnectedOutputs(index), zoom: _this.state.zoom }, _this.WorkSpaceController))));
+                }).filter(function (el) {
+                    if (el == null)
+                        return false;
+                    return true;
+                }),
+                this.state.blockElements.map(function ($value, index) {
+                    return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["ContextMenu"], { key: index, id: "block-" + index },
+                        react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["MenuItem"], { data: { key: index }, onClick: _this.deleteBlockHandler }, "Delete Block"),
+                        react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["MenuItem"], { data: { key: index }, onClick: function (e, data, target) { _this.toolbarNewBlockHandler(_this.state.blockElements[data.key].construct); } }, "Duplicate Block"),
+                        react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["MenuItem"], { data: { key: index }, onClick: _this.showBlockInfoHandler }, "Block Info")));
+                })),
+            react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_ToolBar__WEBPACK_IMPORTED_MODULE_3__["default"], { onNewBlock: this.toolbarNewBlockHandler }),
+            react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["ContextMenu"], { id: "workspace" },
+                react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["MenuItem"], { onClick: this.zoomIn }, "Zoom In"),
+                react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["MenuItem"], { onClick: this.zoomOut }, "Zoom Out"))));
     };
     ;
     return WorkSpace;

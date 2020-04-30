@@ -1,7 +1,7 @@
 {
     "Comparison Operators" : { 
         "Equality" : {
-            "operation" : "std.EQ(0, 1)",
+            "operation" : "std.EQ(0, 1, util.len(0))",
             "description": "Performs a check for equality on two integers, returns a 1 or 0",
             "label": "=",
             "format": {
@@ -10,19 +10,46 @@
                     {
                         "side": "top",
                         "position": 1,
-                        "format": "int"
+                        "format": "bytearr"
                     },
                     {
                         "side": "bottom",
                         "position": 1,
-                        "format": "int"
+                        "format": "bytearr"
                     }
                 ],
                 "outputs" : [
                     {
                         "side": "right",
                         "position": 1,
-                        "format": "int"
+                        "format": "bytearr"
+                    }
+                ]
+            }
+        },
+        "Inequality" : {
+            "operation" : "std.EQ(0, 1, util.len(0))",
+            "description": "Performs a check for inequality on two integers, returns a 1 or 0",
+            "label": "≠",
+            "format": {
+                "size": [50, 50],
+                "inputs": [
+                    {
+                        "side": "top",
+                        "position": 1,
+                        "format": "bytearr"
+                    },
+                    {
+                        "side": "bottom",
+                        "position": 1,
+                        "format": "bytearr"
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "bytearr"
                     }
                 ]
             }
@@ -30,7 +57,7 @@
     },
     "Logic Gates" : {
         "XOR" : {
-            "operation" : "std.XOR(0, 1)",
+            "operation" : "std.XOR(0, 1, util.len(0), 2)",
             "description": "Performs an bitwise exclusive or on two integers.",
             "label": "⊕",
             "format": {
@@ -39,25 +66,25 @@
                     {
                         "side": "top",
                         "position": 1,
-                        "format": "int"
+                        "format": "bytearr"
                     },
                     {
                         "side": "bottom",
                         "position": 1,
-                        "format": "int"
+                        "format": "bytearr"
                     }
                 ],
                 "outputs" : [
                     {
                         "side": "right",
                         "position": 1,
-                        "format": "int"
+                        "format": "bytearr"
                     }
                 ]
             }
         },
         "OR" : {
-            "operation" : "std.OR(0, 1)",
+            "operation" : "std.OR(0, 1, util.len(0), 2)",
             "description": "Performs a bitwise or on two integers.",
             "label": "∨",
             "format": {
@@ -66,25 +93,25 @@
                     {
                         "side": "top",
                         "position": 1,
-                        "format": "int"
+                        "format": "bytearr"
                     },
                     {
                         "side": "bottom",
                         "position": 1,
-                        "format": "int"
+                        "format": "bytearr"
                     }
                 ],
                 "outputs" : [
                     {
                         "side": "right",
                         "position": 1,
-                        "format": "int"
+                        "format": "bytearr"
                     }
                 ]
             }            
         },
         "AND" : {
-            "operation" : "std.AND(0, 1)",
+            "operation" : "std.AND(0, 1, util.len(0), 2)",
             "description": "Performs a bitwise and on two integers.",
             "label": "∧",
             "format": {
@@ -93,25 +120,25 @@
                     {
                         "side": "top",
                         "position": 1,
-                        "format": "int"
+                        "format": "bytearr"
                     },
                     {
                         "side": "bottom",
                         "position": 1,
-                        "format": "int"
+                        "format": "bytearr"
                     }
                 ],
                 "outputs" : [
                     {
                         "side": "right",
                         "position": 1,
-                        "format": "int"
+                        "format": "bytearr"
                     }
                 ]
             }
         },
         "NOT" : {
-            "operation" : "std.NOT(0)",
+            "operation" : "std.NOT(0, util.len(0), 1)",
             "description": "Performs a bitwise not (i.e. compliment) on one integer.",
             "label": "~",
             "format": {
@@ -120,14 +147,14 @@
                     {
                         "side": "left",
                         "position": 1,
-                        "format": "int"
+                        "format": "bytearr"
                     }
                 ],
                 "outputs" : [
                     {
                         "side": "right",
                         "position": 1,
-                        "format": "int"
+                        "format": "bytearr"
                     }
                 ]
             }
@@ -341,6 +368,91 @@
         }
     },
     "Symmetric Encryption" : {
-
+        "AES" : {
+            "operation" : "encrypt.AES(0, 1)",
+            "description": "Given a random key and an initialization value, produce a pseudo-random value of size X which is 1-to-1 mapped with the initialization value",
+            "label": "AES",
+            "format": {
+                "size": [100, 100],
+                "inputs": [
+                    {
+                        "side": "top",
+                        "position": 2,
+                        "format": "int"
+                    },
+                    {
+                        "side": "left",
+                        "position": 1,
+                        "format": "int"
+                    },
+                    {
+                        "side": "left",
+                        "position": 3,
+                        "format": "int"
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 2,
+                        "format": "int"
+                    }
+                ]
+            }
+        },
+        "DES" : {
+            "operation" : "encrypt.DES(0, 1)",
+            "description": "Given a random key and an initialization value, produce a pseudo-random value of size X which is 1-to-1 mapped with the initialization value",
+            "label": "DES",
+            "format": {
+                "size": [100, 100],
+                "inputs": [
+                    {
+                        "side": "left",
+                        "position": 1,
+                        "format": "int"
+                    },
+                    {
+                        "side": "left",
+                        "position": 3,
+                        "format": "int"
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 2,
+                        "format": "int"
+                    }
+                ]
+            }
+        },
+        "One Time Pad" : {
+            "operation" : "encrypt.OTP(0, 1)",
+            "description": "Given a random key and an initialization value, produce a pseudo-random value of size X which is 1-to-1 mapped with the initialization value",
+            "label": "OTP",
+            "format": {
+                "size": [100, 50],
+                "inputs": [
+                    {
+                        "side": "top",
+                        "position": 2,
+                        "format": "int"
+                    },
+                    {
+                        "side": "bottom",
+                        "position": 2,
+                        "format": "int"
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "int"
+                    }
+                ]
+            }
+        }
     }
 }

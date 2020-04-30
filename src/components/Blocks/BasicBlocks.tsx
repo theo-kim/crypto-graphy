@@ -3,7 +3,7 @@ import * as t from 'io-ts';
 
 import blocks from '../../../lib/blocks/std.json';
 
-import { AppBlockProps as IProps, blockTemplates, AppBlockFactory, BlockTemplateFactory } from './AppBlock'
+import { AppBlockProps as IProps, AppBlockFactory, BlockTemplateFactory } from './AppBlock'
 
 const RIBlockLibrary = t.interface({
     operation: t.string,
@@ -57,6 +57,55 @@ Object.keys(blockLibrary).forEach((category : string) =>  {
         StdBlocks[category][blockName] = BlockLoader(category, blockName, blockLibrary[category][blockName]);
     });
 });
+
+// Non-library blocks
+
+function Eavesdropper(props: IProps) {
+    let factory = AppBlockFactory({
+        inputs: [{
+            side: "left",
+            index: 1,
+            connected: false,
+        }],
+        outputs: [{
+            side: "right",
+            index: 1,
+            connected: false,
+        }],
+        size: [50, 50],
+    }, "E", this, props);
+    return factory;
+}
+
+function Bob(props: IProps) {
+    let factory = AppBlockFactory({
+        inputs: [{
+            side: "left",
+            index: 1,
+            connected: false,
+        }],
+        outputs: [],
+        size: [50, 50],
+    }, "B", this, props);
+    return factory;
+}
+
+function Alice(props: IProps) {
+    let factory = AppBlockFactory({
+        outputs: [{
+            side: "right",
+            index: 1,
+            connected: false,
+        }],
+        inputs: [],
+        size: [50, 50],
+    }, "A", this, props);
+    return factory;
+}
+
+StdBlocks["Inputs"] = { Alice }
+StdBlocks["Outputs"] = { Bob }
+StdBlocks["Adversaries"] = { Eavesdropper }
 
 export { ILoaderFunction, StdBlocks };
 export default StdBlocks;

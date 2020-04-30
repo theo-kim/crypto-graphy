@@ -9,6 +9,7 @@ interface AppBlockProps extends IBlockProps {
     icon?: boolean;
     position?: [ number, number ];
     description?: (description : string) => void;
+    zoom: number;
 }
 
 interface IBlockTemplate {
@@ -36,56 +37,12 @@ let slot = function(side : string, index: number) : BlockOutput {
     }
 }
 
-// sizes
-let smallBlockSize : [ number, number ] = [50, 50];
-let mediumBlockSize : [ number, number ] = [100, 100];
-let largeBlockSize : [ number, number ] = [200, 200];
-
-let block2i1o = function() : IBlockTemplate {
-    return {
-        inputs: [ slot("top", 1), slot("bottom", 1) ],
-        outputs: [ slot("right", 1) ],
-        size: smallBlockSize 
-    }
-}
-
-let block1i1o = function() : IBlockTemplate {
-    return {
-        inputs: [ slot("left", 1) ],
-        outputs: [ slot("right", 1) ],
-        size: smallBlockSize,
-    }
-}
-
-let block1o = function(side : string) : IBlockTemplate {
-    return {
-        inputs: [],
-        outputs: [ slot(side, 1) ],
-        size: smallBlockSize,
-    }
-}
-
-let block2i = function() : IBlockTemplate {
-    return {
-        inputs: [ slot("right", 1), slot("left", 1) ],
-        outputs: [],
-        size: smallBlockSize,
-    }
-}
-
 function BlockTemplateFactory(format : any) : IBlockTemplate {
     return {
         inputs: format.inputs.map((input : any) => slot(input.side, input.position)),
         outputs: format.outputs.map((output : any) => slot(output.side, output.position)),
         size: [ format.size[0], format.size[1] ],
     }
-}
-
-let blockTemplates = {
-    block1i1o,
-    block2i1o,
-    block1o,
-    block2i,
 }
 
 class AppBlock extends React.Component<IAppBlockProps, {}> {
@@ -116,6 +73,7 @@ class AppBlock extends React.Component<IAppBlockProps, {}> {
                 onDrag={this.props.onDrag}
                 id={this.props.id}
                 dead={false}
+                zoom={this.props.zoom}
                 position={this.props.position}
                 />
         );
@@ -136,6 +94,7 @@ class IconBlock extends React.Component<IIconBlockProps, {}> {
                 onDrag={() => {}}
                 id={0}
                 dead={true}
+                zoom={1}
                 position={[this.props.template.size[0] / 2, this.props.template.size[1] / 2]}
                 />
         );
@@ -161,4 +120,4 @@ function IconBlockFactory (template : IBlockTemplate, label: string) {
     );
 }
 
-export { AppBlockProps, blockTemplates, IBlockTemplate, AppBlock, AppBlockFactory, IconBlock, IconBlockFactory, BlockTemplateFactory };
+export { AppBlockProps, IBlockTemplate, AppBlock, AppBlockFactory, IconBlock, IconBlockFactory, BlockTemplateFactory };

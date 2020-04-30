@@ -42,6 +42,7 @@ interface IPropsReal {
 interface IPropsMeta {
     label: string;
     dead: boolean;
+    readonly zoom: number;
 }
 
 interface IProps extends IPropsCallback, IPropsReal, IPropsMeta {};
@@ -66,8 +67,8 @@ export default class Block extends React.Component<IProps, IState> {
     constructor(props : IProps) {
         super(props);
 
-        let xSlots = Math.floor(this.props.size[0] / 50);
-        let ySlots = Math.floor(this.props.size[1] / 50);
+        let xSlots = Math.floor(this.props.size[0] / 25);
+        let ySlots = Math.floor(this.props.size[1] / 25);
 
         this.state = {
             posX: this.props.size[0] / 2 + this.props.position[0],
@@ -160,6 +161,9 @@ export default class Block extends React.Component<IProps, IState> {
             if (nextProps.outputs[i].connected != this.props.outputs[i].connected) {
                 return true;
             }
+        }
+        if (nextProps.zoom != this.props.zoom) {
+            return true;
         }
         // Or check if the state changed
         // Change the output handle needs a rerender of the wire
@@ -262,7 +266,8 @@ export default class Block extends React.Component<IProps, IState> {
         this.forceWireRender = [];
         return (
             <Draggable
-                // disabled={this.props.dead}
+                disabled={this.props.dead}
+                // scale={this.props.zoom}
                 bounds=".workspace"
                 cancel=".output, .wire"
                 grid={[appInfo.configurable.gridSize, appInfo.configurable.gridSize]}

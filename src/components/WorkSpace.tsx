@@ -38,6 +38,7 @@ interface IState {
     blocks: IBlock[];
     blockElements: IBlockRender[];
     pendingWireMoveEvent: IOnWireMoveEvent;
+    zoom: number;
 };
 
 interface IBlockRender {
@@ -382,6 +383,19 @@ class WorkSpace extends React.Component<{}, IState> {
         alert(description);
     }
 
+
+    zoomIn = () => {
+        this.setState({
+            zoom: this.state.zoom + 0.1,
+        })
+    }
+
+    zoomOut = () => {
+        this.setState({
+            zoom: this.state.zoom - 0.1,
+        })
+    }
+
     WorkSpaceController : BlockPropsCallback = {
         onWireMove: this.trackWireEnds,
         onBlockMove: this.trackBlocks,
@@ -392,8 +406,8 @@ class WorkSpace extends React.Component<{}, IState> {
     };
 
     defaultBlocks : IBlockRender[] = [ 
-        { construct: BasicBlocks["Logic Gates"]["XOR"], initialPosition: [ 100, 100 ] },
-        { construct: BasicBlocks["Logic Gates"]["AND"], initialPosition: [ 300, 100 ] },
+        { construct: BasicBlocks["Inputs"]["Alice"], initialPosition: [ 100, 100 ] },
+        { construct: BasicBlocks["Outputs"]["Bob"], initialPosition: [ 300, 100 ] },
     ];
 
     domRef : HTMLDivElement = null;
@@ -407,56 +421,73 @@ class WorkSpace extends React.Component<{}, IState> {
             blocks: [],
             blockElements: [...this.defaultBlocks],
             pendingWireMoveEvent: { wire: -1 },
+            zoom: 1,
         };
     }
     
     render() {
         // console.log("Workspace render");
         return (
-            <div className="workspace"
-                ref={c => this.domRef = c}>
-                {
-                    this.state.blockElements.map(($value : IBlockRender, index) => {
-                        if ($value == null) { return null; }
-                        return (
-                            <ContextMenuTrigger
-                                key={ index }
-                                id={ "block-" + index }
-                                >
-                                <$value.construct
-                                    id={ index }
-                                    position={ $value.initialPosition }
-                                    connectedInputs={[]}
-                                    connectedOutputs={this.state.graph.getConnectedOutputs(index)}
-                                    { ...this.WorkSpaceController } />
-                            </ContextMenuTrigger>
-                        );
-                    }).filter((el) => {
-                        if (el == null) return false;
-                        return true;
-                    })
-                }
-                {
-                    this.state.blockElements.map(($value : IBlockRender, index) => {
-                        return (
-                            <ContextMenu
-                                key={ index }
-                                id={ "block-" + index }>
-                                <MenuItem data={{key: index}} onClick={this.deleteBlockHandler}>
-                                    Delete Block
-                                </MenuItem>
-                                <MenuItem data={{key: index}} onClick={(e : any, data : any, target : any) => { this.toolbarNewBlockHandler(this.state.blockElements[data.key].construct); }}>
-                                    Duplicate Block
-                                </MenuItem>
-                                <MenuItem data={{key: index}} onClick={this.showBlockInfoHandler}>
-                                    Block Info
-                                </MenuItem>
-                            </ContextMenu>
-                        );
-                    })
-                }
+            <ContextMenuTrigger
+                id={ "workspace" }
+                attributes={{className : "workspace"}}>
+                <div className="zoom-controller" 
+                    style={{transform: "scale(" + this.state.zoom + ")" }}
+                    ref={c => this.domRef = c}>
+                    {
+                        this.state.blockElements.map(($value : IBlockRender, index) => {
+                            if ($value == null) { return null; }
+                            return (
+                                <ContextMenuTrigger
+                                    key={ index }
+                                    id={ "block-" + index }
+                                    >
+                                    <$value.construct
+                                        id={ index }
+                                        position={ $value.initialPosition }
+                                        connectedInputs={[]}
+                                        connectedOutputs={this.state.graph.getConnectedOutputs(index)}
+                                        zoom={this.state.zoom}
+                                        { ...this.WorkSpaceController } />
+                                </ContextMenuTrigger>
+                            );
+                        }).filter((el) => {
+                            if (el == null) return false;
+                            return true;
+                        })
+                    }
+                    {
+                        this.state.blockElements.map(($value : IBlockRender, index) => {
+                            return (
+                                <ContextMenu
+                                    key={ index }
+                                    id={ "block-" + index }>
+                                    <MenuItem data={{key: index}} onClick={this.deleteBlockHandler}>
+                                        Delete Block
+                                    </MenuItem>
+                                    <MenuItem data={{key: index}} onClick={(e : any, data : any, target : any) => { this.toolbarNewBlockHandler(this.state.blockElements[data.key].construct); }}>
+                                        Duplicate Block
+                                    </MenuItem>
+                                    <MenuItem data={{key: index}} onClick={this.showBlockInfoHandler}>
+                                        Block Info
+                                    </MenuItem>
+                                </ContextMenu>
+                            );
+                        })
+                    }
+                </div>
                 <ToolBar onNewBlock={this.toolbarNewBlockHandler}/>
-            </div>);
+                <ContextMenu
+                    id={ "workspace" }>
+                    <MenuItem onClick={this.zoomIn}>
+                        Zoom In
+                    </MenuItem>
+                    <MenuItem onClick={this.zoomOut}>
+                        Zoom Out
+                    </MenuItem>
+                </ContextMenu>
+            </ContextMenuTrigger>
+        );
     };
 };
 

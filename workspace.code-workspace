@@ -4,5 +4,10 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.associations": {
+			"stdio.h": "c",
+			"md5.h": "c"
+		}
+	}
 }
