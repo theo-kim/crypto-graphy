@@ -1,5 +1,5 @@
 {
-    "logic" : {
+    "Logic Gates" : {
         "XOR" : {
             "operation" : "std.XOR(0, 1)",
             "description": "Performs an bitwise exclusive or on two integers.",
@@ -90,6 +90,62 @@
                 "inputs": [
                     {
                         "side": "left",
+                        "position": 1,
+                        "format": "int"
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "int"
+                    }
+                ]
+            }
+        }
+    },
+    "Arithmetic Gates" : {
+        "ADD" : {
+            "operation" : "std.ADD(0, 1)",
+            "description": "Performs an addition on two integers, dropping any overflow bit.",
+            "label": "+",
+            "format": {
+                "size": [50, 50],
+                "inputs": [
+                    {
+                        "side": "top",
+                        "position": 1,
+                        "format": "int"
+                    },
+                    {
+                        "side": "bottom",
+                        "position": 1,
+                        "format": "int"
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "int"
+                    }
+                ]
+            }
+        },
+        "SUB" : {
+            "operation" : "std.SUB(0, 1)",
+            "description": "Performs a subtraction on two integers, dropping any overflow bit.",
+            "label": "-",
+            "format": {
+                "size": [50, 50],
+                "inputs": [
+                    {
+                        "side": "top",
+                        "position": 1,
+                        "format": "int"
+                    },
+                    {
+                        "side": "bottom",
                         "position": 1,
                         "format": "int"
                     }

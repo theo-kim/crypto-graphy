@@ -192,8 +192,21 @@ body {
 #toolbar #toolbar-pallette {
   position: relative;
   display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+#toolbar #toolbar-pallette .toolbar-section {
+  display: flex;
   flex-wrap: wrap;
   flex-direction: row;
+}
+#toolbar #toolbar-pallette .toolbar-section .toolbar-section-name {
+  flex-grow: 1;
+  padding: 4px 8px;
+  font-size: 12px;
+  text-align: center;
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
 }
 #toolbar #toolbar-pallette .wrapper {
   position: relative;

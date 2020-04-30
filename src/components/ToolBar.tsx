@@ -29,14 +29,23 @@ export default class ToolBar extends React.Component<IProps, IState> {
                     <div id="toolbar-head">Toolbar</div>
                     <div id="toolbar-pallette">
                         {
-                            Object.keys(BasicBlocks['logic']).map((blockName : string, index: number) : JSX.Element => {
-                                let $blockType = BasicBlocks['logic'][blockName];
+                            Object.keys(BasicBlocks).map((category : string, catIndex : number) => {
+                                let packageBlocks = Object.keys(BasicBlocks[category]).map((blockName : string, index: number) => {
+                                    let $blockType = BasicBlocks[category][blockName];
+                                    return (
+                                        <div onMouseDown={(e : React.MouseEvent) => { this.props.onNewBlock($blockType, [ e.clientX, e.clientY ]); }}
+                                            style={{ transform: "scale(0.5)" }}
+                                            className="wrapper"
+                                            key={index}>
+                                            <$blockType icon={true} />
+                                        </div>
+                                    );
+                                });
                                 return (
-                                    <div onMouseDown={(e : React.MouseEvent) => { this.props.onNewBlock($blockType, [ e.clientX, e.clientY ]); }}
-                                        style={{ transform: "scale(0.5)" }}
-                                        className="wrapper"
-                                        key={index}>
-                                        <$blockType icon={true} />
+                                    <div className="toolbar-section"
+                                        key={catIndex}>
+                                        <div className="toolbar-section-name">{category}</div>
+                                        { packageBlocks }
                                     </div>
                                 );
                             })

@@ -90,10 +90,10 @@
 /*!*****************************!*\
   !*** ./lib/blocks/std.json ***!
   \*****************************/
-/*! exports provided: logic, default */
+/*! exports provided: Logic Gates, Arithmetic Gates, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"logic\":{\"XOR\":{\"operation\":\"std.XOR(0, 1)\",\"description\":\"Performs an bitwise exclusive or on two integers.\",\"label\":\"⊕\",\"format\":{\"size\":[50,50],\"inputs\":[{\"side\":\"top\",\"position\":1,\"format\":\"int\"},{\"side\":\"bottom\",\"position\":1,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}},\"OR\":{\"operation\":\"std.OR(0, 1)\",\"description\":\"Performs a bitwise or on two integers.\",\"label\":\"∨\",\"format\":{\"size\":[50,50],\"inputs\":[{\"side\":\"top\",\"position\":1,\"format\":\"int\"},{\"side\":\"bottom\",\"position\":1,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}},\"AND\":{\"operation\":\"std.AND(0, 1)\",\"description\":\"Performs a bitwise and on two integers.\",\"label\":\"∧\",\"format\":{\"size\":[50,50],\"inputs\":[{\"side\":\"top\",\"position\":1,\"format\":\"int\"},{\"side\":\"bottom\",\"position\":1,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}},\"NOT\":{\"operation\":\"std.NOT(0)\",\"description\":\"Performs a bitwise not (i.e. compliment) on one integer.\",\"label\":\"~\",\"format\":{\"size\":[50,50],\"inputs\":[{\"side\":\"left\",\"position\":1,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}}}}");
+module.exports = JSON.parse("{\"Logic Gates\":{\"XOR\":{\"operation\":\"std.XOR(0, 1)\",\"description\":\"Performs an bitwise exclusive or on two integers.\",\"label\":\"⊕\",\"format\":{\"size\":[50,50],\"inputs\":[{\"side\":\"top\",\"position\":1,\"format\":\"int\"},{\"side\":\"bottom\",\"position\":1,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}},\"OR\":{\"operation\":\"std.OR(0, 1)\",\"description\":\"Performs a bitwise or on two integers.\",\"label\":\"∨\",\"format\":{\"size\":[50,50],\"inputs\":[{\"side\":\"top\",\"position\":1,\"format\":\"int\"},{\"side\":\"bottom\",\"position\":1,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}},\"AND\":{\"operation\":\"std.AND(0, 1)\",\"description\":\"Performs a bitwise and on two integers.\",\"label\":\"∧\",\"format\":{\"size\":[50,50],\"inputs\":[{\"side\":\"top\",\"position\":1,\"format\":\"int\"},{\"side\":\"bottom\",\"position\":1,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}},\"NOT\":{\"operation\":\"std.NOT(0)\",\"description\":\"Performs a bitwise not (i.e. compliment) on one integer.\",\"label\":\"~\",\"format\":{\"size\":[50,50],\"inputs\":[{\"side\":\"left\",\"position\":1,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}}},\"Arithmetic Gates\":{\"ADD\":{\"operation\":\"std.ADD(0, 1)\",\"description\":\"Performs an addition on two integers, dropping any overflow bit.\",\"label\":\"+\",\"format\":{\"size\":[50,50],\"inputs\":[{\"side\":\"top\",\"position\":1,\"format\":\"int\"},{\"side\":\"bottom\",\"position\":1,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}},\"SUB\":{\"operation\":\"std.SUB(0, 1)\",\"description\":\"Performs a subtraction on two integers, dropping any overflow bit.\",\"label\":\"-\",\"format\":{\"size\":[50,50],\"inputs\":[{\"side\":\"top\",\"position\":1,\"format\":\"int\"},{\"side\":\"bottom\",\"position\":1,\"format\":\"int\"}],\"outputs\":[{\"side\":\"right\",\"position\":1,\"format\":\"int\"}]}}}}");
 
 /***/ }),
 
@@ -34214,11 +34214,12 @@ function IconBlockFactory(template, label) {
 /*!***********************************************!*\
   !*** ./src/components/Blocks/BasicBlocks.tsx ***!
   \***********************************************/
-/*! exports provided: default */
+/*! exports provided: StdBlocks, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StdBlocks", function() { return StdBlocks; });
 /* harmony import */ var io_ts__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! io-ts */ "./node_modules/io-ts/es6/index.js");
 /* harmony import */ var _lib_blocks_std_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../lib/blocks/std.json */ "./lib/blocks/std.json");
 var _lib_blocks_std_json__WEBPACK_IMPORTED_MODULE_1___namespace = /*#__PURE__*/__webpack_require__.t(/*! ../../../lib/blocks/std.json */ "./lib/blocks/std.json", 1);
@@ -34246,11 +34247,14 @@ var RIBlockLibrary = io_ts__WEBPACK_IMPORTED_MODULE_0__["interface"]({
 });
 var RIBlockLibraryFile = io_ts__WEBPACK_IMPORTED_MODULE_0__["dictionary"](io_ts__WEBPACK_IMPORTED_MODULE_0__["string"], io_ts__WEBPACK_IMPORTED_MODULE_0__["dictionary"](io_ts__WEBPACK_IMPORTED_MODULE_0__["string"], RIBlockLibrary));
 // Block loader
-function BlockLoader(lib) {
-    return function (props) {
-        console.log(lib);
+function BlockLoader(packageName, blockName, lib) {
+    var loader = function (props) {
         return Object(_AppBlock__WEBPACK_IMPORTED_MODULE_2__["AppBlockFactory"])(Object(_AppBlock__WEBPACK_IMPORTED_MODULE_2__["BlockTemplateFactory"])(lib.format), lib.label, this, props);
     };
+    loader.description = lib.description;
+    loader.packageName = packageName;
+    loader.blockName = blockName;
+    return loader;
 }
 var StdBlocks = {};
 RIBlockLibraryFile.decode(_lib_blocks_std_json__WEBPACK_IMPORTED_MODULE_1__);
@@ -34258,61 +34262,11 @@ var blockLibrary = _lib_blocks_std_json__WEBPACK_IMPORTED_MODULE_1__;
 Object.keys(blockLibrary).forEach(function (category) {
     StdBlocks[category] = {};
     Object.keys(blockLibrary[category]).forEach(function (blockName) {
-        StdBlocks[category][blockName] = BlockLoader(blockLibrary[category][blockName]);
+        StdBlocks[category][blockName] = BlockLoader(category, blockName, blockLibrary[category][blockName]);
     });
 });
+
 /* harmony default export */ __webpack_exports__["default"] = (StdBlocks);
-// // Logic Blocks
-// class XORBlock extends React.Component<IProps, {}> {
-//     render() {
-//         return AppBlockFactory(blockTemplates.block2i1o(), "⊕", XORBlock, this.props);
-//     }
-// }
-// class ANDBlock extends React.Component<IProps, {}>  {
-//     render() {
-//         return AppBlockFactory(blockTemplates.block2i1o(), "∧", ANDBlock, this.props);
-//     }
-// }
-// class ORBlock extends React.Component<IProps, {}>  {
-//     render() {
-//         return AppBlockFactory(blockTemplates.block2i1o(), "∨", ORBlock, this.props);
-//     }
-// }
-// class NOTBlock extends React.Component<IProps, {}>  {
-//     render() {
-//         return AppBlockFactory(blockTemplates.block1i1o(), "~", NOTBlock, this.props);
-//     }
-// }
-// // People Blocks
-// class AliceBlock extends React.Component<IProps, {}> {
-//     render() {
-//         return AppBlockFactory(blockTemplates.block1o("right"), "A", AliceBlock, this.props);
-//     }
-// }
-// class BobBlock extends React.Component<IProps, {}> {
-//     render() {
-//         return AppBlockFactory(blockTemplates.block1o("left"), "B", BobBlock, this.props);
-//     }
-// }
-// class EveBlock extends React.Component<IProps, {}> {
-//     render() {
-//         return AppBlockFactory(blockTemplates.block2i(), "E", EveBlock, this.props);
-//     }
-// }
-// // Arithmetic Blocks
-// class AddBlock extends React.Component<IProps, {}> {
-//     render() {
-//         return AppBlockFactory(blockTemplates.block2i1o(), "+", AddBlock, this.props);
-//     }
-// }
-// class SubBlock extends React.Component<IProps, {}> {
-//     render() {
-//         return AppBlockFactory(blockTemplates.block2i1o(), "-", SubBlock, this.props);
-//     }
-// }
-// // Module Exports
-// let iconBlocks : Function[] = [XORBlock , ANDBlock, ORBlock, NOTBlock, AliceBlock, BobBlock, EveBlock, AddBlock, SubBlock]
-// export { XORBlock , ANDBlock, ORBlock, NOTBlock, AliceBlock, BobBlock, EveBlock, AddBlock, SubBlock, iconBlocks };
 
 
 /***/ }),
@@ -34778,10 +34732,15 @@ var ToolBar = /** @class */ (function (_super) {
         return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_draggable__WEBPACK_IMPORTED_MODULE_1___default.a, { handle: "#toolbar-head", bounds: "parent" },
             react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { id: "toolbar" },
                 react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { id: "toolbar-head" }, "Toolbar"),
-                react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { id: "toolbar-pallette" }, Object.keys(_Blocks_BasicBlocks__WEBPACK_IMPORTED_MODULE_2__["default"]['logic']).map(function (blockName, index) {
-                    var $blockType = _Blocks_BasicBlocks__WEBPACK_IMPORTED_MODULE_2__["default"]['logic'][blockName];
-                    return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { onMouseDown: function (e) { _this.props.onNewBlock($blockType, [e.clientX, e.clientY]); }, style: { transform: "scale(0.5)" }, className: "wrapper", key: index },
-                        react__WEBPACK_IMPORTED_MODULE_0__["createElement"]($blockType, { icon: true })));
+                react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { id: "toolbar-pallette" }, Object.keys(_Blocks_BasicBlocks__WEBPACK_IMPORTED_MODULE_2__["default"]).map(function (category, catIndex) {
+                    var packageBlocks = Object.keys(_Blocks_BasicBlocks__WEBPACK_IMPORTED_MODULE_2__["default"][category]).map(function (blockName, index) {
+                        var $blockType = _Blocks_BasicBlocks__WEBPACK_IMPORTED_MODULE_2__["default"][category][blockName];
+                        return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { onMouseDown: function (e) { _this.props.onNewBlock($blockType, [e.clientX, e.clientY]); }, style: { transform: "scale(0.5)" }, className: "wrapper", key: index },
+                            react__WEBPACK_IMPORTED_MODULE_0__["createElement"]($blockType, { icon: true })));
+                    });
+                    return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { className: "toolbar-section", key: catIndex },
+                        react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { className: "toolbar-section-name" }, category),
+                        packageBlocks));
                 })))));
     };
     ;
@@ -35136,7 +35095,7 @@ var WorkSpaceGraph = /** @class */ (function () {
         this.inputGraph[to.block][to.port] = GraphState.UNCONNECTED;
     };
     WorkSpaceGraph.prototype.getConnectedOutputs = function (key) {
-        if (key >= this.size) {
+        if (key >= this.size || this.outputGraph[key] === null) {
             return [];
         }
         var output = [];
@@ -35308,6 +35267,14 @@ var WorkSpace = /** @class */ (function (_super) {
                 return previousState;
             });
         };
+        // Show a description of the block
+        _this.showBlockInfoHandler = function (e, data, target) {
+            var loader = _this.state.blockElements[data.key].construct;
+            var name = loader.blockName;
+            var packageName = loader.packageName;
+            var description = loader.description;
+            alert(description);
+        };
         _this.WorkSpaceController = {
             onWireMove: _this.trackWireEnds,
             onBlockMove: _this.trackBlocks,
@@ -35317,8 +35284,8 @@ var WorkSpace = /** @class */ (function (_super) {
             onDrag: _this.updateDependencies
         };
         _this.defaultBlocks = [
-            { construct: _Blocks_BasicBlocks__WEBPACK_IMPORTED_MODULE_2__["default"]["logic"]["XOR"], initialPosition: [100, 100] },
-            { construct: _Blocks_BasicBlocks__WEBPACK_IMPORTED_MODULE_2__["default"]["logic"]["AND"], initialPosition: [300, 100] },
+            { construct: _Blocks_BasicBlocks__WEBPACK_IMPORTED_MODULE_2__["StdBlocks"]["Logic Gates"]["XOR"], initialPosition: [100, 100] },
+            { construct: _Blocks_BasicBlocks__WEBPACK_IMPORTED_MODULE_2__["StdBlocks"]["Logic Gates"]["AND"], initialPosition: [300, 100] },
         ];
         _this.domRef = null;
         _this.state = {
@@ -35363,8 +35330,8 @@ var WorkSpace = /** @class */ (function (_super) {
             this.state.blockElements.map(function ($value, index) {
                 return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["ContextMenu"], { key: index, id: "block-" + index },
                     react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["MenuItem"], { data: { key: index }, onClick: _this.deleteBlockHandler }, "Delete Block"),
-                    react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["MenuItem"], { data: { key: index }, onClick: function () { } }, "Duplicate Block"),
-                    react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["MenuItem"], { data: { key: index }, onClick: function () { } }, "Block Info")));
+                    react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["MenuItem"], { data: { key: index }, onClick: function (e, data, target) { _this.toolbarNewBlockHandler(_this.state.blockElements[data.key].construct); } }, "Duplicate Block"),
+                    react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["MenuItem"], { data: { key: index }, onClick: _this.showBlockInfoHandler }, "Block Info")));
             }),
             react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_ToolBar__WEBPACK_IMPORTED_MODULE_3__["default"], { onNewBlock: this.toolbarNewBlockHandler })));
     };

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 
 import Block, { IPropsCallback as BlockPropsCallback, IPropsReal as IBlockProps, IOnWireMoveEvent } from './Blocks/Block'
-import BasicBlocks from './Blocks/BasicBlocks';
+import { ILoaderFunction, StdBlocks as BasicBlocks } from './Blocks/BasicBlocks';
 import ToolBar from './ToolBar';
 
 // Interface definitions
@@ -41,7 +41,7 @@ interface IState {
 };
 
 interface IBlockRender {
-    construct: Function;
+    construct: ILoaderFunction;
     initialPosition: [ number, number ];
 };
 
@@ -173,7 +173,7 @@ class WorkSpaceGraph {
     }
 
     getConnectedOutputs (key : number) : number[] {
-        if (key >= this.size) {
+        if (key >= this.size || this.outputGraph[key] === null) {
             return [];
         }
         
@@ -344,7 +344,7 @@ class WorkSpace extends React.Component<{}, IState> {
     }
 
     // Toolbar new block handler
-    toolbarNewBlockHandler = (blockType: Function, coords: [number, number]) => {
+    toolbarNewBlockHandler = (blockType: Function, coords?: [number, number]) => {
         let offset : [number, number] = [ 
             Math.round((this.domRef.getBoundingClientRect().width / 2) / 50) * 50,
             Math.round((this.domRef.getBoundingClientRect().height / 2) / 50) * 50
@@ -373,6 +373,15 @@ class WorkSpace extends React.Component<{}, IState> {
         });
     };
 
+    // Show a description of the block
+    showBlockInfoHandler = (e : any, data : any, target : any) => {
+        let loader : ILoaderFunction = this.state.blockElements[data.key].construct;
+        let name : string = loader.blockName;
+        let packageName : string = loader.packageName;
+        let description : string = loader.description;
+        alert(description);
+    }
+
     WorkSpaceController : BlockPropsCallback = {
         onWireMove: this.trackWireEnds,
         onBlockMove: this.trackBlocks,
@@ -383,8 +392,8 @@ class WorkSpace extends React.Component<{}, IState> {
     };
 
     defaultBlocks : IBlockRender[] = [ 
-        { construct: BasicBlocks["logic"]["XOR"], initialPosition: [ 100, 100 ] },
-        { construct: BasicBlocks["logic"]["AND"], initialPosition: [ 300, 100 ] },
+        { construct: BasicBlocks["Logic Gates"]["XOR"], initialPosition: [ 100, 100 ] },
+        { construct: BasicBlocks["Logic Gates"]["AND"], initialPosition: [ 300, 100 ] },
     ];
 
     domRef : HTMLDivElement = null;
@@ -436,10 +445,10 @@ class WorkSpace extends React.Component<{}, IState> {
                                 <MenuItem data={{key: index}} onClick={this.deleteBlockHandler}>
                                     Delete Block
                                 </MenuItem>
-                                <MenuItem data={{key: index}} onClick={() => {}}>
+                                <MenuItem data={{key: index}} onClick={(e : any, data : any, target : any) => { this.toolbarNewBlockHandler(this.state.blockElements[data.key].construct); }}>
                                     Duplicate Block
                                 </MenuItem>
-                                <MenuItem data={{key: index}} onClick={() => {}}>
+                                <MenuItem data={{key: index}} onClick={this.showBlockInfoHandler}>
                                     Block Info
                                 </MenuItem>
                             </ContextMenu>

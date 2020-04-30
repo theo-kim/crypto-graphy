@@ -264,9 +264,23 @@ body {
 
     #toolbar-pallette {
         position: relative;
-        display:flex;
-        flex-wrap:wrap;
-        flex-direction:row;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+
+        .toolbar-section {
+            display:flex;
+            flex-wrap:wrap;
+            flex-direction:row;
+            .toolbar-section-name {
+                flex-grow: 1;
+                padding: @xsm-spacing @sml-spacing;
+                font-size: @xsm-text;
+                text-align: center;
+                border-top: 1px solid #000;
+                border-bottom: 1px solid #000;
+            }
+        }
 
         .wrapper {
             position: relative;
