@@ -1,0 +1,107 @@
+{
+    "logic" : {
+        "XOR" : {
+            "operation" : "std.XOR(0, 1)",
+            "description": "Performs an bitwise exclusive or on two integers.",
+            "label": "⊕",
+            "format": {
+                "size": [50, 50],
+                "inputs": [
+                    {
+                        "side": "top",
+                        "position": 1,
+                        "format": "int"
+                    },
+                    {
+                        "side": "bottom",
+                        "position": 1,
+                        "format": "int"
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "int"
+                    }
+                ]
+            }
+        },
+        "OR" : {
+            "operation" : "std.OR(0, 1)",
+            "description": "Performs a bitwise or on two integers.",
+            "label": "∨",
+            "format": {
+                "size": [50, 50],
+                "inputs": [
+                    {
+                        "side": "top",
+                        "position": 1,
+                        "format": "int"
+                    },
+                    {
+                        "side": "bottom",
+                        "position": 1,
+                        "format": "int"
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "int"
+                    }
+                ]
+            }            
+        },
+        "AND" : {
+            "operation" : "std.AND(0, 1)",
+            "description": "Performs a bitwise and on two integers.",
+            "label": "∧",
+            "format": {
+                "size": [ 50, 50 ],
+                "inputs": [
+                    {
+                        "side": "top",
+                        "position": 1,
+                        "format": "int"
+                    },
+                    {
+                        "side": "bottom",
+                        "position": 1,
+                        "format": "int"
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "int"
+                    }
+                ]
+            }
+        },
+        "NOT" : {
+            "operation" : "std.NOT(0)",
+            "description": "Performs a bitwise not (i.e. compliment) on one integer.",
+            "label": "~",
+            "format": {
+                "size": [ 50, 50 ],
+                "inputs": [
+                    {
+                        "side": "left",
+                        "position": 1,
+                        "format": "int"
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "int"
+                    }
+                ]
+            }
+        }
+    }
+}

@@ -2,7 +2,7 @@ import * as React from 'react';
 import Draggable from 'react-draggable';
 
 import { IPropsCallback as BlockPropsCallback } from './Blocks/Block'
-import { iconBlocks as BasicBlocks } from './Blocks/BasicBlocks';
+import BasicBlocks from './Blocks/BasicBlocks';
 
 interface IProps {
     onNewBlock: (blockType: Function, coords: [number, number]) => void;
@@ -29,7 +29,8 @@ export default class ToolBar extends React.Component<IProps, IState> {
                     <div id="toolbar-head">Toolbar</div>
                     <div id="toolbar-pallette">
                         {
-                            BasicBlocks.map(($blockType : Function, index: number) : JSX.Element => {
+                            Object.keys(BasicBlocks['logic']).map((blockName : string, index: number) : JSX.Element => {
+                                let $blockType = BasicBlocks['logic'][blockName];
                                 return (
                                     <div onMouseDown={(e : React.MouseEvent) => { this.props.onNewBlock($blockType, [ e.clientX, e.clientY ]); }}
                                         style={{ transform: "scale(0.5)" }}

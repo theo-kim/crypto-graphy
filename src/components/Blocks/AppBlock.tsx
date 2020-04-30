@@ -8,6 +8,7 @@ interface AppBlockProps extends IBlockProps {
     connectedInputs: number[];
     icon?: boolean;
     position?: [ number, number ];
+    description?: (description : string) => void;
 }
 
 interface IBlockTemplate {
@@ -69,6 +70,14 @@ let block2i = function() : IBlockTemplate {
         inputs: [ slot("right", 1), slot("left", 1) ],
         outputs: [],
         size: smallBlockSize,
+    }
+}
+
+function BlockTemplateFactory(format : any) : IBlockTemplate {
+    return {
+        inputs: format.inputs.map((input : any) => slot(input.side, input.position)),
+        outputs: format.outputs.map((output : any) => slot(output.side, output.position)),
+        size: [ format.size[0], format.size[1] ],
     }
 }
 
@@ -152,4 +161,4 @@ function IconBlockFactory (template : IBlockTemplate, label: string) {
     );
 }
 
-export { AppBlockProps, blockTemplates, IBlockTemplate, AppBlock, AppBlockFactory, IconBlock, IconBlockFactory };
+export { AppBlockProps, blockTemplates, IBlockTemplate, AppBlock, AppBlockFactory, IconBlock, IconBlockFactory, BlockTemplateFactory };

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 
 import Block, { IPropsCallback as BlockPropsCallback, IPropsReal as IBlockProps, IOnWireMoveEvent } from './Blocks/Block'
-import { AliceBlock, BobBlock } from './Blocks/BasicBlocks';
+import BasicBlocks from './Blocks/BasicBlocks';
 import ToolBar from './ToolBar';
 
 // Interface definitions
@@ -30,7 +30,7 @@ interface IBlock extends IBlockProps, IEventTracker {};
 interface IGraphConstants {
     IMPOSSIBLE: IWorkSpaceGraphNode;
     UNCONNECTED: IWorkSpaceGraphNode;
-}
+}   
 
 interface IState {
     graph : WorkSpaceGraph;
@@ -383,8 +383,8 @@ class WorkSpace extends React.Component<{}, IState> {
     };
 
     defaultBlocks : IBlockRender[] = [ 
-        { construct: AliceBlock, initialPosition: [ 100, 100 ] },
-        { construct: BobBlock, initialPosition: [ 300, 100 ] },
+        { construct: BasicBlocks["logic"]["XOR"], initialPosition: [ 100, 100 ] },
+        { construct: BasicBlocks["logic"]["AND"], initialPosition: [ 300, 100 ] },
     ];
 
     domRef : HTMLDivElement = null;
