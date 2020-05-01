@@ -235,6 +235,47 @@ body {
 .react-contextmenu .react-contextmenu-item:hover {
   background-color: #8ea8c3ff;
 }
+div#console {
+  background: #333333;
+  color: #f0f0f0;
+  font-family: 'Source Code Pro', serif;
+  font-size: 12px;
+  width: 80%;
+  height: 200px;
+  border: 2px solid #e0e0e0;
+  position: absolute;
+  bottom: 10px;
+  left: 5%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+div#console #console-head {
+  text-align: left;
+  font-family: 'Roboto', serif;
+  background-color: #e0e0e0;
+  color: #333333;
+  padding: 4px 8px;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+div#console .console-line {
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  padding: 0 8px;
+}
+div#console .console-line input {
+  background: none;
+  border: none;
+  flex-grow: 1;
+  color: inherit;
+  font-family: inherit;
+}
+div#console .console-line input:focus {
+  outline: none;
+}
 
 
 /*# sourceMappingURL=style.css.map*/

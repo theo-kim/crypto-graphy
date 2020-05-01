@@ -22,6 +22,7 @@
 // Families
 @body-font:                   'Roboto', serif;
 @title-font:                  'Baloo Paaji 2', serif;
+@mono-font:                   'Source Code Pro', serif;
 // Element specific
 @app-bar-font:                @title-font;
 @control-menu-font:           @body-font;
@@ -312,6 +313,52 @@ body {
 
         &:hover {
             background-color: @light;
+        }
+    }
+}
+
+div#console {
+    background: @black;
+    color: @white;
+    font-family: @mono-font;
+    font-size: @xsm-text;
+    width: 80%;
+    height: 200px;
+    border: 2px solid @grey;
+    position: absolute;
+    bottom: 10px;
+    left: 5%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    #console-head {
+        text-align: left;
+        font-family: @body-font;
+        background-color: @grey;
+        color: @black;
+        padding: @xsm-spacing @sml-spacing;
+        font-size: @sml-text;
+        margin-bottom: @sml-spacing;
+    }
+
+    .console-line {
+        padding: 0;
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        padding: 0 @sml-spacing;
+
+        input {
+            background: none;
+            border: none;
+            flex-grow: 1;
+            color : inherit;
+            font-family: inherit;
+
+            &:focus {
+                outline: none;
+            }
         }
     }
 }

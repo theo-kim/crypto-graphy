@@ -1,6 +1,7 @@
 {
-    "appName": "CryptoMaster",
+    "appName": "Crypto-Graphy",
     "configurable": {
-        "gridSize": 25
-    } 
+        "gridSize": 25,
+        "ps1": "$>"
+    }
 }

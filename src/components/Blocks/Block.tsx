@@ -212,9 +212,6 @@ export default class Block extends React.Component<IProps, IState> {
         let x : number = this.state.posX + dx;
         let y : number = this.state.posY + dy;
 
-        console.log(nx + "-" + this.state.posX + "=" + dx)
-        console.log(ny + "-" + this.state.posY + "=" + dy)
-
         this.setState((previousState : IState, props: IProps) => {
             let newState : any = {
                 posX : x,

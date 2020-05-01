@@ -34017,7 +34017,7 @@ var App = /** @class */ (function (_super) {
 /*! exports provided: appName, configurable, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"appName\":\"CryptoMaster\",\"configurable\":{\"gridSize\":25}}");
+module.exports = JSON.parse("{\"appName\":\"Crypto-Graphy\",\"configurable\":{\"gridSize\":25,\"ps1\":\"$>\"}}");
 
 /***/ }),
 
@@ -34400,8 +34400,6 @@ var Block = /** @class */ (function (_super) {
             var dy = Math.round((ny - _this.state.posY) / _appInfo_json__WEBPACK_IMPORTED_MODULE_4__["configurable"].gridSize) * _appInfo_json__WEBPACK_IMPORTED_MODULE_4__["configurable"].gridSize;
             var x = _this.state.posX + dx;
             var y = _this.state.posY + dy;
-            console.log(nx + "-" + _this.state.posX + "=" + dx);
-            console.log(ny + "-" + _this.state.posY + "=" + dy);
             _this.setState(function (previousState, props) {
                 var newState = {
                     posX: x,
@@ -34678,6 +34676,80 @@ var ClickAwayListener = /** @class */ (function (_super) {
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component));
 ;
 /* harmony default export */ __webpack_exports__["default"] = (ClickAwayListener);
+
+
+/***/ }),
+
+/***/ "./src/components/Console.tsx":
+/*!************************************!*\
+  !*** ./src/components/Console.tsx ***!
+  \************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react_draggable__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-draggable */ "./node_modules/react-draggable/build/web/react-draggable.min.js");
+/* harmony import */ var react_draggable__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_draggable__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var immutability_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! immutability-helper */ "./node_modules/immutability-helper/index.js");
+/* harmony import */ var immutability_helper__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(immutability_helper__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _appInfo_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../appInfo.json */ "./src/appInfo.json");
+var _appInfo_json__WEBPACK_IMPORTED_MODULE_3___namespace = /*#__PURE__*/__webpack_require__.t(/*! ../appInfo.json */ "./src/appInfo.json", 1);
+var __extends = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+
+
+
+
+var Console = /** @class */ (function (_super) {
+    __extends(Console, _super);
+    function Console(props) {
+        var _this = _super.call(this, props) || this;
+        _this.handleSpecialKeys = function (e) {
+            if (e.key === 'Enter') {
+                var line_1 = e.target.value;
+                e.target.value = "";
+                _this.setState(function () {
+                    return {
+                        lines: immutability_helper__WEBPACK_IMPORTED_MODULE_2___default()(_this.state.lines, { $push: [line_1] })
+                    };
+                });
+            }
+        };
+        _this.state = { lines: [] };
+        return _this;
+    }
+    Console.prototype.render = function () {
+        return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_draggable__WEBPACK_IMPORTED_MODULE_1___default.a, { handle: "#console-head", bounds: "parent" },
+            react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { id: "console" },
+                react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { id: "console-head" }, "Console"),
+                this.state.lines.map(function (line, index) {
+                    return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { className: "console-line", key: index },
+                        _appInfo_json__WEBPACK_IMPORTED_MODULE_3__.configurable.ps1,
+                        "\u00A0",
+                        react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("input", { value: line, readOnly: true })));
+                }),
+                react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { className: "console-line" },
+                    _appInfo_json__WEBPACK_IMPORTED_MODULE_3__.configurable.ps1,
+                    "\u00A0",
+                    react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("input", { onKeyDown: this.handleSpecialKeys, autoFocus: true })))));
+    };
+    return Console;
+}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]));
+/* harmony default export */ __webpack_exports__["default"] = (Console);
 
 
 /***/ }),
@@ -35006,6 +35078,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_contextmenu__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-contextmenu */ "./node_modules/react-contextmenu/es6/index.js");
 /* harmony import */ var _Blocks_BasicBlocks__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Blocks/BasicBlocks */ "./src/components/Blocks/BasicBlocks.tsx");
 /* harmony import */ var _ToolBar__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ToolBar */ "./src/components/ToolBar.tsx");
+/* harmony import */ var _Console__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Console */ "./src/components/Console.tsx");
 var __extends = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -35037,6 +35110,7 @@ var __spreadArrays = (undefined && undefined.__spreadArrays) || function () {
             r[k] = a[j];
     return r;
 };
+
 
 
 
@@ -35424,6 +35498,7 @@ var WorkSpace = /** @class */ (function (_super) {
                     react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["MenuItem"], { data: { key: index }, onClick: function (e, data, target) { _this.toolbarNewBlockHandler(_this.state.blockElements[data.key].construct); } }, "Duplicate Block"),
                     react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["MenuItem"], { data: { key: index }, onClick: _this.showBlockInfoHandler }, "Block Info")));
             }),
+            react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_Console__WEBPACK_IMPORTED_MODULE_4__["default"], null),
             react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_ToolBar__WEBPACK_IMPORTED_MODULE_3__["default"], { onNewBlock: this.toolbarNewBlockHandler }),
             react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["ContextMenu"], { id: "workspace" },
                 react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["MenuItem"], { onClick: this.zoomIn }, "Zoom In"),

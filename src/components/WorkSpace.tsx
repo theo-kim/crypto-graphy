@@ -4,6 +4,7 @@ import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 import Block, { IPropsCallback as BlockPropsCallback, IPropsReal as IBlockProps, IOnWireMoveEvent } from './Blocks/Block'
 import { ILoaderFunction, StdBlocks as BasicBlocks } from './Blocks/BasicBlocks';
 import ToolBar from './ToolBar';
+import Console from './Console';
 
 // Interface definitions
 interface IInputs {
@@ -483,6 +484,7 @@ class WorkSpace extends React.Component<{}, IState> {
                         );
                     })
                 }
+                <Console />
                 <ToolBar onNewBlock={this.toolbarNewBlockHandler}/>
                 <ContextMenu
                     id={ "workspace" }>
