@@ -2,10 +2,10 @@ import * as React from 'react';
 import Draggable from 'react-draggable';
 
 import { IPropsCallback as BlockPropsCallback } from './Blocks/Block'
-import BasicBlocks from './Blocks/BasicBlocks';
+import BasicBlocks, { ILoaderFunction } from './Blocks/BasicBlocks';
 
 interface IProps {
-    onNewBlock: (blockType: Function, coords: [number, number]) => void;
+    onNewBlock: (blockType: ILoaderFunction, coords: [number, number]) => void;
 };
 
 interface IState {};
@@ -39,7 +39,7 @@ export default class ToolBar extends React.Component<IProps, IState> {
                                         <div onMouseDown={(e : React.MouseEvent) => { this.props.onNewBlock($blockType, [ e.clientX, e.clientY ]); }}
                                             className="wrapper"
                                             key={index}>
-                                            <$blockType icon={true} />
+                                            <$blockType.constructor icon={true} />
                                         </div>
                                     );
                                 });

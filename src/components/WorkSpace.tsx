@@ -239,7 +239,9 @@ class WorkSpace extends React.Component<{}, IState> {
             else {
                 previousState.blocks.push({...block, ...b});
             }
+            console.log(block.position);
             inputs.forEach((value : [number, number], index : number) => {
+                console.log(value);
                 previousState.inputs.push({
                     block: block.id,
                     index: index,
@@ -258,6 +260,7 @@ class WorkSpace extends React.Component<{}, IState> {
             // console.log("Block #" + key + " moved to position " + coords[0] + ", " + coords[1]);
             previousState.blocks[key].position[0] = coords[0];
             previousState.blocks[key].position[1] = coords[1];
+            console.log(coords);
             return previousState;
         });
     }   
@@ -265,6 +268,7 @@ class WorkSpace extends React.Component<{}, IState> {
     trackWireEnds = (key: number, index: number, coords: [number, number]) => {
         let connection : number = this.detectConnections(coords);
         if (connection >= 0) {
+            console.log("Connection");
             this.setState((previousState : IState, props : {}) => {
                 previousState.graph.addEdge(key, this.state.inputs[connection].block, index, this.state.inputs[connection].index);
                 return previousState;
@@ -338,6 +342,10 @@ class WorkSpace extends React.Component<{}, IState> {
 
     // delete block
     deleteBlockHandler = (e : any, data : any, target : any) => {
+        if (this.state.blockElements[data.key].construct == BasicBlocks["Inputs"]["Alice"] || this.state.blockElements[data.key].construct == BasicBlocks["Outputs"]["Bob"]) {
+            alert("You cannot delete Alice or Bob");
+            return;
+        }
         this.setState((previousState : IState, props : {}) => {
             previousState.blockElements[data.key] = null;
             return previousState;
@@ -345,10 +353,10 @@ class WorkSpace extends React.Component<{}, IState> {
     }
 
     // Toolbar new block handler
-    toolbarNewBlockHandler = (blockType: Function, coords?: [number, number]) => {
+    toolbarNewBlockHandler = (blockType: ILoaderFunction, coords?: [number, number]) => {
         let offset : [number, number] = [ 
-            Math.round((this.domRef.getBoundingClientRect().width / 2) / 50) * 50,
-            Math.round((this.domRef.getBoundingClientRect().height / 2) / 50) * 50
+            blockType.format.size[0] / 2,
+            blockType.format.size[1] / 2
         ]
         this.setState((previousState : IState, props : {}) => {
             let insertionPoint = -1;
@@ -406,8 +414,8 @@ class WorkSpace extends React.Component<{}, IState> {
     };
 
     defaultBlocks : IBlockRender[] = [ 
-        { construct: BasicBlocks["Inputs"]["Alice"], initialPosition: [ 100, 100 ] },
-        { construct: BasicBlocks["Outputs"]["Bob"], initialPosition: [ 300, 100 ] },
+        { construct: BasicBlocks["Inputs"]["Alice"], initialPosition: [ 125, 125 ] },
+        { construct: BasicBlocks["Outputs"]["Bob"], initialPosition: [ 325, 325 ] },
     ];
 
     domRef : HTMLDivElement = null;
@@ -440,9 +448,8 @@ class WorkSpace extends React.Component<{}, IState> {
                             return (
                                 <ContextMenuTrigger
                                     key={ index }
-                                    id={ "block-" + index }
-                                    >
-                                    <$value.construct
+                                    id={ "block-" + index }>
+                                    <$value.construct.constructor
                                         id={ index }
                                         position={ $value.initialPosition }
                                         connectedInputs={[]}
@@ -456,26 +463,26 @@ class WorkSpace extends React.Component<{}, IState> {
                             return true;
                         })
                     }
-                    {
-                        this.state.blockElements.map(($value : IBlockRender, index) => {
-                            return (
-                                <ContextMenu
-                                    key={ index }
-                                    id={ "block-" + index }>
-                                    <MenuItem data={{key: index}} onClick={this.deleteBlockHandler}>
-                                        Delete Block
-                                    </MenuItem>
-                                    <MenuItem data={{key: index}} onClick={(e : any, data : any, target : any) => { this.toolbarNewBlockHandler(this.state.blockElements[data.key].construct); }}>
-                                        Duplicate Block
-                                    </MenuItem>
-                                    <MenuItem data={{key: index}} onClick={this.showBlockInfoHandler}>
-                                        Block Info
-                                    </MenuItem>
-                                </ContextMenu>
-                            );
-                        })
-                    }
                 </div>
+                {
+                    this.state.blockElements.map(($value : IBlockRender, index) => {
+                        return (
+                            <ContextMenu
+                                key={ index }
+                                id={ "block-" + index }>
+                                <MenuItem data={{key: index}} onClick={this.deleteBlockHandler}>
+                                    Delete Block
+                                </MenuItem>
+                                <MenuItem data={{key: index}} onClick={(e : any, data : any, target : any) => { this.toolbarNewBlockHandler(this.state.blockElements[data.key].construct); }}>
+                                    Duplicate Block
+                                </MenuItem>
+                                <MenuItem data={{key: index}} onClick={this.showBlockInfoHandler}>
+                                    Block Info
+                                </MenuItem>
+                            </ContextMenu>
+                        );
+                    })
+                }
                 <ToolBar onNewBlock={this.toolbarNewBlockHandler}/>
                 <ContextMenu
                     id={ "workspace" }>

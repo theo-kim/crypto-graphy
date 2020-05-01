@@ -24,10 +24,12 @@ const RIBlockLibrary = t.interface({
     })
 });
 
-interface ILoaderFunction extends Function {
-    description?: string;
-    packageName?: string;
-    blockName?: string;
+type RIBlock = t.TypeOf<typeof RIBlockLibrary>;
+
+interface ILoaderFunction extends RIBlock {
+    packageName: string;
+    blockName: string;
+    constructor: Function;
 }
 
 const RIBlockLibraryFile = t.dictionary(t.string, t.dictionary(t.string, RIBlockLibrary));
@@ -36,14 +38,12 @@ type IBlockLibraryFile = t.TypeOf<typeof RIBlockLibraryFile>;
 type IBlockLibrary = { [ packageName : string ] : { [ blockName : string ] : ILoaderFunction } };
 
 // Block loader
-function BlockLoader (packageName: string, blockName: string, lib : any) : ILoaderFunction {
-    let loader : ILoaderFunction = function (props : IProps) {
+function BlockLoader (packageName: string, blockName: string, lib : RIBlock) : ILoaderFunction {
+    let construct = function (props : IProps) {
         return AppBlockFactory(BlockTemplateFactory(lib.format), lib.label, this, props);
     };
-    loader.description = lib.description;
-    loader.packageName = packageName;
-    loader.blockName = blockName;
-    return loader;
+    const packageInfo = { packageName, blockName }
+    return {...lib, ...packageInfo, constructor: construct};
 }
 
 let StdBlocks : IBlockLibrary = {};
@@ -60,47 +60,99 @@ Object.keys(blockLibrary).forEach((category : string) =>  {
 
 // Non-library blocks
 
-function Eavesdropper(props: IProps) {
-    let factory = AppBlockFactory({
-        inputs: [{
-            side: "left",
-            index: 1,
-            connected: false,
-        }],
-        outputs: [{
+let Eavesdropper : ILoaderFunction = {
+    packageName: "Adversaries",
+    blockName: "Eavesdropper",
+    format: {
+        output: [{
             side: "right",
-            index: 1,
-            connected: false,
+            position: 1,
+            format: "bytearr",
+        }],
+        input: [{
+            side: "left",
+            position: 1,
+            format: "bytearr",
         }],
         size: [50, 50],
-    }, "E", this, props);
-    return factory;
+    },
+    operation: "1=0",
+    label: "E",
+    description: "Block used to eavesdrop on a block transition",
+    constructor: function (props: IProps) {
+        let factory = AppBlockFactory({
+            inputs: [{
+                side: "left",
+                index: 1,
+                connected: false,
+            }],
+            outputs: [{
+                side: "right",
+                index: 1,
+                connected: false,
+            }],
+            size: [50, 50],
+        }, "E", this, props);
+        return factory;
+    }
 }
 
-function Bob(props: IProps) {
-    let factory = AppBlockFactory({
-        inputs: [{
+let Bob : ILoaderFunction = {
+    packageName: "Outputs",
+    blockName: "Bob",
+    format: {
+        output: [],
+        input: [{
             side: "left",
-            index: 1,
-            connected: false,
+            position: 1,
+            format: "bytearr",
         }],
-        outputs: [],
         size: [50, 50],
-    }, "B", this, props);
-    return factory;
+    },
+    operation: "0",
+    label: "B",
+    description: "Block used to specify the message receiver",
+    constructor: function(props: IProps) {
+        let factory = AppBlockFactory({
+            inputs: [{
+                side: "left",
+                index: 1,
+                connected: false,
+            }],
+            outputs: [],
+            size: [50, 50],
+        }, "B", this, props);
+        return factory;
+    }
 }
 
-function Alice(props: IProps) {
-    let factory = AppBlockFactory({
-        outputs: [{
+let Alice : ILoaderFunction = {
+    packageName: "Inputs",
+    blockName: "Alice",
+    format: {
+        output: [{
             side: "right",
-            index: 1,
-            connected: false,
+            position: 1,
+            format: "bytearr",
         }],
-        inputs: [],
+        input: [],
         size: [50, 50],
-    }, "A", this, props);
-    return factory;
+    },
+    operation: "0",
+    label: "A",
+    description: "Block used to specify the message sender",
+    constructor: function (props: IProps) {
+        let factory = AppBlockFactory({
+            outputs: [{
+                side: "right",
+                index: 1,
+                connected: false,
+            }],
+            inputs: [],
+            size: [50, 50],
+        }, "A", this, props);
+        return factory;
+    }
 }
 
 StdBlocks["Inputs"] = { Alice }

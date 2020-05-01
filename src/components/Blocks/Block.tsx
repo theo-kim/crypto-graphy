@@ -71,8 +71,8 @@ export default class Block extends React.Component<IProps, IState> {
         let ySlots = Math.floor(this.props.size[1] / 25);
 
         this.state = {
-            posX: this.props.size[0] / 2 + this.props.position[0],
-            posY: this.props.size[1] / 2 + this.props.position[1],
+            posX: this.props.position[0],
+            posY: this.props.position[1],
             outputPos: [], 
             outputPosEnd: [], 
             inputPos: [],
@@ -211,6 +211,9 @@ export default class Block extends React.Component<IProps, IState> {
 
         let x : number = this.state.posX + dx;
         let y : number = this.state.posY + dy;
+
+        console.log(nx + "-" + this.state.posX + "=" + dx)
+        console.log(ny + "-" + this.state.posY + "=" + dy)
 
         this.setState((previousState : IState, props: IProps) => {
             let newState : any = {

@@ -34017,7 +34017,7 @@ var App = /** @class */ (function (_super) {
 /*! exports provided: appName, configurable, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"appName\":\"CryptoMaster\",\"configurable\":{\"gridSize\":50}}");
+module.exports = JSON.parse("{\"appName\":\"CryptoMaster\",\"configurable\":{\"gridSize\":25}}");
 
 /***/ }),
 
@@ -34185,6 +34185,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _lib_blocks_std_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../lib/blocks/std.json */ "./lib/blocks/std.json");
 var _lib_blocks_std_json__WEBPACK_IMPORTED_MODULE_1___namespace = /*#__PURE__*/__webpack_require__.t(/*! ../../../lib/blocks/std.json */ "./lib/blocks/std.json", 1);
 /* harmony import */ var _AppBlock__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./AppBlock */ "./src/components/Blocks/AppBlock.tsx");
+var __assign = (undefined && undefined.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 
 
 
@@ -34209,13 +34220,11 @@ var RIBlockLibrary = io_ts__WEBPACK_IMPORTED_MODULE_0__["interface"]({
 var RIBlockLibraryFile = io_ts__WEBPACK_IMPORTED_MODULE_0__["dictionary"](io_ts__WEBPACK_IMPORTED_MODULE_0__["string"], io_ts__WEBPACK_IMPORTED_MODULE_0__["dictionary"](io_ts__WEBPACK_IMPORTED_MODULE_0__["string"], RIBlockLibrary));
 // Block loader
 function BlockLoader(packageName, blockName, lib) {
-    var loader = function (props) {
+    var construct = function (props) {
         return Object(_AppBlock__WEBPACK_IMPORTED_MODULE_2__["AppBlockFactory"])(Object(_AppBlock__WEBPACK_IMPORTED_MODULE_2__["BlockTemplateFactory"])(lib.format), lib.label, this, props);
     };
-    loader.description = lib.description;
-    loader.packageName = packageName;
-    loader.blockName = blockName;
-    return loader;
+    var packageInfo = { packageName: packageName, blockName: blockName };
+    return __assign(__assign(__assign({}, lib), packageInfo), { constructor: construct });
 }
 var StdBlocks = {};
 RIBlockLibraryFile.decode(_lib_blocks_std_json__WEBPACK_IMPORTED_MODULE_1__);
@@ -34227,46 +34236,98 @@ Object.keys(blockLibrary).forEach(function (category) {
     });
 });
 // Non-library blocks
-function Eavesdropper(props) {
-    var factory = Object(_AppBlock__WEBPACK_IMPORTED_MODULE_2__["AppBlockFactory"])({
-        inputs: [{
-                side: "left",
-                index: 1,
-                connected: false,
-            }],
-        outputs: [{
+var Eavesdropper = {
+    packageName: "Adversaries",
+    blockName: "Eavesdropper",
+    format: {
+        output: [{
                 side: "right",
-                index: 1,
-                connected: false,
+                position: 1,
+                format: "bytearr",
             }],
-        size: [50, 50],
-    }, "E", this, props);
-    return factory;
-}
-function Bob(props) {
-    var factory = Object(_AppBlock__WEBPACK_IMPORTED_MODULE_2__["AppBlockFactory"])({
-        inputs: [{
+        input: [{
                 side: "left",
-                index: 1,
-                connected: false,
+                position: 1,
+                format: "bytearr",
             }],
-        outputs: [],
         size: [50, 50],
-    }, "B", this, props);
-    return factory;
-}
-function Alice(props) {
-    var factory = Object(_AppBlock__WEBPACK_IMPORTED_MODULE_2__["AppBlockFactory"])({
-        outputs: [{
+    },
+    operation: "1=0",
+    label: "E",
+    description: "Block used to eavesdrop on a block transition",
+    constructor: function (props) {
+        var factory = Object(_AppBlock__WEBPACK_IMPORTED_MODULE_2__["AppBlockFactory"])({
+            inputs: [{
+                    side: "left",
+                    index: 1,
+                    connected: false,
+                }],
+            outputs: [{
+                    side: "right",
+                    index: 1,
+                    connected: false,
+                }],
+            size: [50, 50],
+        }, "E", this, props);
+        return factory;
+    }
+};
+var Bob = {
+    packageName: "Outputs",
+    blockName: "Bob",
+    format: {
+        output: [],
+        input: [{
+                side: "left",
+                position: 1,
+                format: "bytearr",
+            }],
+        size: [50, 50],
+    },
+    operation: "0",
+    label: "B",
+    description: "Block used to specify the message receiver",
+    constructor: function (props) {
+        var factory = Object(_AppBlock__WEBPACK_IMPORTED_MODULE_2__["AppBlockFactory"])({
+            inputs: [{
+                    side: "left",
+                    index: 1,
+                    connected: false,
+                }],
+            outputs: [],
+            size: [50, 50],
+        }, "B", this, props);
+        return factory;
+    }
+};
+var Alice = {
+    packageName: "Inputs",
+    blockName: "Alice",
+    format: {
+        output: [{
                 side: "right",
-                index: 1,
-                connected: false,
+                position: 1,
+                format: "bytearr",
             }],
-        inputs: [],
+        input: [],
         size: [50, 50],
-    }, "A", this, props);
-    return factory;
-}
+    },
+    operation: "0",
+    label: "A",
+    description: "Block used to specify the message sender",
+    constructor: function (props) {
+        var factory = Object(_AppBlock__WEBPACK_IMPORTED_MODULE_2__["AppBlockFactory"])({
+            outputs: [{
+                    side: "right",
+                    index: 1,
+                    connected: false,
+                }],
+            inputs: [],
+            size: [50, 50],
+        }, "A", this, props);
+        return factory;
+    }
+};
 StdBlocks["Inputs"] = { Alice: Alice };
 StdBlocks["Outputs"] = { Bob: Bob };
 StdBlocks["Adversaries"] = { Eavesdropper: Eavesdropper };
@@ -34339,6 +34400,8 @@ var Block = /** @class */ (function (_super) {
             var dy = Math.round((ny - _this.state.posY) / _appInfo_json__WEBPACK_IMPORTED_MODULE_4__["configurable"].gridSize) * _appInfo_json__WEBPACK_IMPORTED_MODULE_4__["configurable"].gridSize;
             var x = _this.state.posX + dx;
             var y = _this.state.posY + dy;
+            console.log(nx + "-" + _this.state.posX + "=" + dx);
+            console.log(ny + "-" + _this.state.posY + "=" + dy);
             _this.setState(function (previousState, props) {
                 var newState = {
                     posX: x,
@@ -34384,8 +34447,8 @@ var Block = /** @class */ (function (_super) {
         var xSlots = Math.floor(_this.props.size[0] / 25);
         var ySlots = Math.floor(_this.props.size[1] / 25);
         _this.state = {
-            posX: _this.props.size[0] / 2 + _this.props.position[0],
-            posY: _this.props.size[1] / 2 + _this.props.position[1],
+            posX: _this.props.position[0],
+            posY: _this.props.position[1],
             outputPos: [],
             outputPosEnd: [],
             inputPos: [],
@@ -34745,7 +34808,7 @@ var ToolBar = /** @class */ (function (_super) {
                     var packageBlocks = Object.keys(_Blocks_BasicBlocks__WEBPACK_IMPORTED_MODULE_2__["default"][category]).map(function (blockName, index) {
                         var $blockType = _Blocks_BasicBlocks__WEBPACK_IMPORTED_MODULE_2__["default"][category][blockName];
                         return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { onMouseDown: function (e) { _this.props.onNewBlock($blockType, [e.clientX, e.clientY]); }, className: "wrapper", key: index },
-                            react__WEBPACK_IMPORTED_MODULE_0__["createElement"]($blockType, { icon: true })));
+                            react__WEBPACK_IMPORTED_MODULE_0__["createElement"]($blockType.constructor, { icon: true })));
                     });
                     return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { className: "toolbar-section", key: catIndex },
                         react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { className: "toolbar-section-name" }, category),
@@ -35168,7 +35231,9 @@ var WorkSpace = /** @class */ (function (_super) {
                 else {
                     previousState.blocks.push(__assign(__assign({}, block), b));
                 }
+                console.log(block.position);
                 inputs.forEach(function (value, index) {
+                    console.log(value);
                     previousState.inputs.push({
                         block: block.id,
                         index: index,
@@ -35184,12 +35249,14 @@ var WorkSpace = /** @class */ (function (_super) {
                 // console.log("Block #" + key + " moved to position " + coords[0] + ", " + coords[1]);
                 previousState.blocks[key].position[0] = coords[0];
                 previousState.blocks[key].position[1] = coords[1];
+                console.log(coords);
                 return previousState;
             });
         };
         _this.trackWireEnds = function (key, index, coords) {
             var connection = _this.detectConnections(coords);
             if (connection >= 0) {
+                console.log("Connection");
                 _this.setState(function (previousState, props) {
                     previousState.graph.addEdge(key, _this.state.inputs[connection].block, index, _this.state.inputs[connection].index);
                     return previousState;
@@ -35243,6 +35310,10 @@ var WorkSpace = /** @class */ (function (_super) {
         };
         // delete block
         _this.deleteBlockHandler = function (e, data, target) {
+            if (_this.state.blockElements[data.key].construct == _Blocks_BasicBlocks__WEBPACK_IMPORTED_MODULE_2__["StdBlocks"]["Inputs"]["Alice"] || _this.state.blockElements[data.key].construct == _Blocks_BasicBlocks__WEBPACK_IMPORTED_MODULE_2__["StdBlocks"]["Outputs"]["Bob"]) {
+                alert("You cannot delete Alice or Bob");
+                return;
+            }
             _this.setState(function (previousState, props) {
                 previousState.blockElements[data.key] = null;
                 return previousState;
@@ -35251,8 +35322,8 @@ var WorkSpace = /** @class */ (function (_super) {
         // Toolbar new block handler
         _this.toolbarNewBlockHandler = function (blockType, coords) {
             var offset = [
-                Math.round((_this.domRef.getBoundingClientRect().width / 2) / 50) * 50,
-                Math.round((_this.domRef.getBoundingClientRect().height / 2) / 50) * 50
+                blockType.format.size[0] / 2,
+                blockType.format.size[1] / 2
             ];
             _this.setState(function (previousState, props) {
                 var insertionPoint = -1;
@@ -35303,8 +35374,8 @@ var WorkSpace = /** @class */ (function (_super) {
             onDrag: _this.updateDependencies
         };
         _this.defaultBlocks = [
-            { construct: _Blocks_BasicBlocks__WEBPACK_IMPORTED_MODULE_2__["StdBlocks"]["Inputs"]["Alice"], initialPosition: [100, 100] },
-            { construct: _Blocks_BasicBlocks__WEBPACK_IMPORTED_MODULE_2__["StdBlocks"]["Outputs"]["Bob"], initialPosition: [300, 100] },
+            { construct: _Blocks_BasicBlocks__WEBPACK_IMPORTED_MODULE_2__["StdBlocks"]["Inputs"]["Alice"], initialPosition: [125, 125] },
+            { construct: _Blocks_BasicBlocks__WEBPACK_IMPORTED_MODULE_2__["StdBlocks"]["Outputs"]["Bob"], initialPosition: [325, 325] },
         ];
         _this.domRef = null;
         _this.state = {
@@ -35336,24 +35407,23 @@ var WorkSpace = /** @class */ (function (_super) {
         var _this = this;
         // console.log("Workspace render");
         return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["ContextMenuTrigger"], { id: "workspace", attributes: { className: "workspace" } },
-            react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { className: "zoom-controller", style: { transform: "scale(" + this.state.zoom + ")" }, ref: function (c) { return _this.domRef = c; } },
-                this.state.blockElements.map(function ($value, index) {
-                    if ($value == null) {
-                        return null;
-                    }
-                    return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["ContextMenuTrigger"], { key: index, id: "block-" + index },
-                        react__WEBPACK_IMPORTED_MODULE_0__["createElement"]($value.construct, __assign({ id: index, position: $value.initialPosition, connectedInputs: [], connectedOutputs: _this.state.graph.getConnectedOutputs(index), zoom: _this.state.zoom }, _this.WorkSpaceController))));
-                }).filter(function (el) {
-                    if (el == null)
-                        return false;
-                    return true;
-                }),
-                this.state.blockElements.map(function ($value, index) {
-                    return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["ContextMenu"], { key: index, id: "block-" + index },
-                        react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["MenuItem"], { data: { key: index }, onClick: _this.deleteBlockHandler }, "Delete Block"),
-                        react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["MenuItem"], { data: { key: index }, onClick: function (e, data, target) { _this.toolbarNewBlockHandler(_this.state.blockElements[data.key].construct); } }, "Duplicate Block"),
-                        react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["MenuItem"], { data: { key: index }, onClick: _this.showBlockInfoHandler }, "Block Info")));
-                })),
+            react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { className: "zoom-controller", style: { transform: "scale(" + this.state.zoom + ")" }, ref: function (c) { return _this.domRef = c; } }, this.state.blockElements.map(function ($value, index) {
+                if ($value == null) {
+                    return null;
+                }
+                return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["ContextMenuTrigger"], { key: index, id: "block-" + index },
+                    react__WEBPACK_IMPORTED_MODULE_0__["createElement"]($value.construct.constructor, __assign({ id: index, position: $value.initialPosition, connectedInputs: [], connectedOutputs: _this.state.graph.getConnectedOutputs(index), zoom: _this.state.zoom }, _this.WorkSpaceController))));
+            }).filter(function (el) {
+                if (el == null)
+                    return false;
+                return true;
+            })),
+            this.state.blockElements.map(function ($value, index) {
+                return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["ContextMenu"], { key: index, id: "block-" + index },
+                    react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["MenuItem"], { data: { key: index }, onClick: _this.deleteBlockHandler }, "Delete Block"),
+                    react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["MenuItem"], { data: { key: index }, onClick: function (e, data, target) { _this.toolbarNewBlockHandler(_this.state.blockElements[data.key].construct); } }, "Duplicate Block"),
+                    react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["MenuItem"], { data: { key: index }, onClick: _this.showBlockInfoHandler }, "Block Info")));
+            }),
             react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_ToolBar__WEBPACK_IMPORTED_MODULE_3__["default"], { onNewBlock: this.toolbarNewBlockHandler }),
             react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["ContextMenu"], { id: "workspace" },
                 react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["MenuItem"], { onClick: this.zoomIn }, "Zoom In"),
