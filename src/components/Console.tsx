@@ -4,23 +4,40 @@ import update from 'immutability-helper';
 
 import appInfo from '../appInfo.json';
 
+interface IProps {
+    onCommand: (command : string) => string[];
+}
+
 interface IState {
     lines: string[];
 }
 
-class Console extends React.Component<{}, IState> {    
-    constructor (props : {}) {
+class Console extends React.Component<IProps, IState> {
+    userInput : HTMLDivElement;
+    
+    constructor (props : IProps) {
         super(props);
         this.state = { lines : [] }
     }
 
+    scrollToBottom = () => {
+        this.userInput.scrollIntoView();    
+    }
+
+    componentDidUpdate() {
+        this.scrollToBottom();
+    }
+
     handleSpecialKeys = (e : React.KeyboardEvent) => {
         if (e.key === 'Enter') {
-            let line : string = (e.target as HTMLInputElement).value;
+            let command : string = (e.target as HTMLInputElement).value;
+            let line : string = appInfo.configurable.ps1 + " " + command;
             (e.target as HTMLInputElement).value = "";
             this.setState(() => {
+                let response : string[] = this.props.onCommand(command);
+                response.unshift(line);
                 return {
-                    lines: update(this.state.lines, { $push: [ line ] })
+                    lines: update(this.state.lines, { $push: response })
                 }
             });
         }
@@ -33,22 +50,23 @@ class Console extends React.Component<{}, IState> {
                 bounds="parent">
                 <div id="console" >
                     <div id="console-head">Console</div>
-                    {
-                        this.state.lines.map((line : string, index: number) => {
-                            return ( 
-                                <div className="console-line" key={index}>
-                                    { appInfo.configurable.ps1 }&nbsp;
-                                    <input value={line} readOnly />
-                                </div>
-                            );
-                        })
-                    }
-                    {
-                        <div className="console-line">
-                            { appInfo.configurable.ps1 }&nbsp;
-                            <input onKeyDown={this.handleSpecialKeys} autoFocus/>
-                        </div>
-                    }
+                    <div id="console-body">
+                        {
+                            this.state.lines.map((line : string, index: number) => {
+                                return ( 
+                                    <div className="console-line" key={index}>
+                                        { line }
+                                    </div>
+                                );
+                            })
+                        }
+                        {
+                            <div className="console-line" ref={(el) => { this.userInput = el; }}>
+                                { appInfo.configurable.ps1 }&nbsp;
+                                <input onKeyDown={this.handleSpecialKeys} autoFocus/>
+                            </div>
+                        }
+                    </div>
                 </div>
             </Draggable>
         );

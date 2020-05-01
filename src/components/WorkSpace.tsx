@@ -6,6 +6,9 @@ import { ILoaderFunction, StdBlocks as BasicBlocks } from './Blocks/BasicBlocks'
 import ToolBar from './ToolBar';
 import Console from './Console';
 
+import appInfo from '../appInfo.json';
+import { getJoinSemigroup } from 'fp-ts/lib/Semigroup';
+
 // Interface definitions
 interface IInputs {
     block : number;
@@ -16,6 +19,7 @@ interface IInputs {
 interface IWorkSpaceGraphNode {
     block: number;
     port: number;
+    value: number | string | Uint8Array;
 };
 
 interface IPendingWireMove extends IOnWireMoveEvent, IWorkSpaceGraphNode {}
@@ -49,8 +53,8 @@ interface IBlockRender {
 
 // Globals
 let GraphState : IGraphConstants = {
-    IMPOSSIBLE: { block: -2, port: -2 },
-    UNCONNECTED: { block: -1, port: -1 },
+    IMPOSSIBLE: { block: -2, port: -2, value: null },
+    UNCONNECTED: { block: -1, port: -1, value: null },
 };
 
 // Class definitions
@@ -152,8 +156,8 @@ class WorkSpaceGraph {
         if (output > this.outputGraph[from].length || input > this.inputGraph[to].length) {
             throw "OutOfBoundBucketException";
         }
-        this.outputGraph[from][output] = { block: to, port: input};
-        this.inputGraph[to][input] = { block: from, port: output };
+        this.outputGraph[from][output] = { block: to, port: input, value: null };
+        this.inputGraph[to][input] = { block: from, port: output, value: null };
     }
 
     removeEdge(key : number, index : number) {
@@ -204,6 +208,19 @@ class WorkSpaceGraph {
             });
             return output;
         }
+    }
+
+    getUnconnectedInputs() : [number, number][] {
+        let output : [number, number][] = [];
+        for (let i = 0; i < this.size; ++i) {
+            this.inputGraph[i].forEach((value : IWorkSpaceGraphNode, index: number) => {
+                output.push([i, 0]);
+                if (value == GraphState.UNCONNECTED) {
+                    output[output.length - 1][1] += 1;
+                }
+            })
+        }
+        return output;
     }
 }
 
@@ -297,6 +314,7 @@ class WorkSpace extends React.Component<{}, IState> {
                     previousState.blocks[d.block].pendingTransformations.push({
                         block: d.block,
                         port: d.port,
+                        value: d.value,
                         wire: d.port,
                         x: dx,
                         y: dy,
@@ -405,6 +423,90 @@ class WorkSpace extends React.Component<{}, IState> {
         })
     }
 
+    runProject = () : boolean => {
+        if (this.verifyProject().length != 0) {
+            return false;
+        }
+        return true;
+    }
+
+    verifyProject = () : string[] => {
+        let errors : string[] = [];
+        // Ensure that there are no blocks with unassigned inputs
+        // Check 1: Make sure that Alice's value was set
+        if (this.state.graph.outputGraph[0][0].value == null) {
+            errors.push("\u00a0\u00a0> Alice has not been given a message, use command 'alice <message>'")
+        }
+        // Check 2: Find unassigned inputs
+        let missingInputs : [number, number][] = this.state.graph.getUnconnectedInputs();
+        if (missingInputs.length > 0) {
+            missingInputs.forEach((value: [number, number]) => {
+                if (value[1] > 0) {
+                    let blockName : string = this.state.blockElements[value[0]].construct.blockName;
+                    errors.push("\u00a0\u00a0> Block " + blockName + " has " + value[1] + " unconnected inputs, make sure that all inputs are connected with a wire");
+                }
+            })
+        }
+
+        if (errors.length > 0) {
+            errors.unshift(errors.length + " errors found: ");
+        }
+        return errors;
+    }
+
+    handleConsoleCommand = (command : string) : string[] => {
+        let tokenized : string[] = command.split(" ");
+        let keyword : string = tokenized[0];
+        if (!(keyword in appInfo.console)) {
+            return [ "Command not recognized, type 'help' for help" ];
+        }
+        if (keyword == "help") {
+            let commandList : { [name: string] : string } = appInfo.console;
+            return Object.keys(commandList).map((name : string) => {
+                let tab : string = "";
+                for (let i = name.length; i < 9; ++i) {
+                    tab += "\u00a0";
+                }
+                return name + tab + commandList[name as any];
+            });
+        }
+        if (keyword == "alice") {
+            tokenized.shift();
+            if (tokenized.length == 0) {
+                return [ "Missing a value, use 'alice <value>'"];
+            }
+            else {
+                let message = tokenized.join(" ");
+                this.state.graph.outputGraph[0][0].value = message;
+                return [ "Alice will send the message: " + message ]
+            }
+        }
+        if (keyword == "run") {
+            if (this.runProject()) {
+                return [ "Project run successfully, use command 'bob' to see what message Bob received from Alice." ]
+            }
+            else {
+                return [ "Project failed to run, use 'verify' to track down errors in your project before running." ]
+            }
+        }
+        if (keyword == "verify") {
+            let errors : string[] = this.verifyProject();
+            if (errors.length > 0) {
+                return errors;
+            }
+            return [ "No errors found! Run your project with 'run'" ]
+        }
+        if (keyword == "bob") {
+            if (this.state.graph.inputGraph[1][0].value == null) {
+                return [ "Bob has not received a message yet, run the project with command 'run' first" ]
+            }
+            else {
+                return [ this.state.graph.inputGraph[1][0].value.toString() ]
+            }
+        }
+        return [ "Command not implemented yet" ];
+    }
+
     WorkSpaceController : BlockPropsCallback = {
         onWireMove: this.trackWireEnds,
         onBlockMove: this.trackBlocks,
@@ -484,7 +586,7 @@ class WorkSpace extends React.Component<{}, IState> {
                         );
                     })
                 }
-                <Console />
+                <Console onCommand={this.handleConsoleCommand}/>
                 <ToolBar onNewBlock={this.toolbarNewBlockHandler}/>
                 <ContextMenu
                     id={ "workspace" }>

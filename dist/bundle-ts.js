@@ -34014,10 +34014,10 @@ var App = /** @class */ (function (_super) {
 /*!**************************!*\
   !*** ./src/appInfo.json ***!
   \**************************/
-/*! exports provided: appName, configurable, default */
+/*! exports provided: appName, configurable, console, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"appName\":\"Crypto-Graphy\",\"configurable\":{\"gridSize\":25,\"ps1\":\"$>\"}}");
+module.exports = JSON.parse("{\"appName\":\"Crypto-Graphy\",\"configurable\":{\"gridSize\":25,\"ps1\":\"$>\"},\"console\":{\"help\":\"Brings up the help menu\",\"run\":\"Runs the project\",\"alice\":\"Set the input message for the Alice block, accepts a string or a number\",\"bob\":\"Display the message that Bob receives from Alice after running the project\",\"verify\":\"Checks the block configuration for errors\"}}");
 
 /***/ }),
 
@@ -34718,13 +34718,19 @@ var Console = /** @class */ (function (_super) {
     __extends(Console, _super);
     function Console(props) {
         var _this = _super.call(this, props) || this;
+        _this.scrollToBottom = function () {
+            _this.userInput.scrollIntoView();
+        };
         _this.handleSpecialKeys = function (e) {
             if (e.key === 'Enter') {
-                var line_1 = e.target.value;
+                var command_1 = e.target.value;
+                var line_1 = _appInfo_json__WEBPACK_IMPORTED_MODULE_3__.configurable.ps1 + " " + command_1;
                 e.target.value = "";
                 _this.setState(function () {
+                    var response = _this.props.onCommand(command_1);
+                    response.unshift(line_1);
                     return {
-                        lines: immutability_helper__WEBPACK_IMPORTED_MODULE_2___default()(_this.state.lines, { $push: [line_1] })
+                        lines: immutability_helper__WEBPACK_IMPORTED_MODULE_2___default()(_this.state.lines, { $push: response })
                     };
                 });
             }
@@ -34732,20 +34738,22 @@ var Console = /** @class */ (function (_super) {
         _this.state = { lines: [] };
         return _this;
     }
+    Console.prototype.componentDidUpdate = function () {
+        this.scrollToBottom();
+    };
     Console.prototype.render = function () {
+        var _this = this;
         return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_draggable__WEBPACK_IMPORTED_MODULE_1___default.a, { handle: "#console-head", bounds: "parent" },
             react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { id: "console" },
                 react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { id: "console-head" }, "Console"),
-                this.state.lines.map(function (line, index) {
-                    return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { className: "console-line", key: index },
+                react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { id: "console-body" },
+                    this.state.lines.map(function (line, index) {
+                        return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { className: "console-line", key: index }, line));
+                    }),
+                    react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { className: "console-line", ref: function (el) { _this.userInput = el; } },
                         _appInfo_json__WEBPACK_IMPORTED_MODULE_3__.configurable.ps1,
                         "\u00A0",
-                        react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("input", { value: line, readOnly: true })));
-                }),
-                react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { className: "console-line" },
-                    _appInfo_json__WEBPACK_IMPORTED_MODULE_3__.configurable.ps1,
-                    "\u00A0",
-                    react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("input", { onKeyDown: this.handleSpecialKeys, autoFocus: true })))));
+                        react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("input", { onKeyDown: this.handleSpecialKeys, autoFocus: true }))))));
     };
     return Console;
 }(react__WEBPACK_IMPORTED_MODULE_0__["Component"]));
@@ -34790,7 +34798,7 @@ var ControlMenu = /** @class */ (function (_super) {
             { label: "File", subOptions: ["New Project", "New Module", "Import", "Export", "Preferences", "Example Project"] },
             { label: "Edit", subOptions: ["Undo", "Redo", "Export"] },
             { label: "Run", subOptions: ["Module", "Project", "Debugger"] },
-            { label: "View", subOptions: ["Toolbar"] }
+            { label: "View", subOptions: ["Toolbar", "Zoom In", "Zoom Out"] }
         ];
         _this.state = {
             controlMenuSelected: -1
@@ -34807,8 +34815,8 @@ var ControlMenu = /** @class */ (function (_super) {
         var wrapper = (react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { id: "control-menu" }, this.menuOptions.map(function (element, index) {
             return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { key: index },
                 react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { className: "label " + (_this.state.controlMenuSelected == index ? "selected" : ""), onClick: function () { return _this.showSubMenu(index); } }, element.label),
-                (_this.state.controlMenuSelected == index) ? (react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_ClickAwayListener__WEBPACK_IMPORTED_MODULE_1__["default"], { onClickAway: function () { return _this.showSubMenu(-1); }, className: "sub-menu " + (_this.state.controlMenuSelected == index ? "visible" : ""), key: index }, element.subOptions.map(function (element) {
-                    return react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", null, element);
+                (_this.state.controlMenuSelected == index) ? (react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_ClickAwayListener__WEBPACK_IMPORTED_MODULE_1__["default"], { onClickAway: function () { return _this.showSubMenu(-1); }, className: "sub-menu " + (_this.state.controlMenuSelected == index ? "visible" : ""), key: index }, element.subOptions.map(function (element, index) {
+                    return react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", { key: index }, element);
                 }))) : null));
         })));
         return wrapper;
@@ -35079,6 +35087,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Blocks_BasicBlocks__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Blocks/BasicBlocks */ "./src/components/Blocks/BasicBlocks.tsx");
 /* harmony import */ var _ToolBar__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ToolBar */ "./src/components/ToolBar.tsx");
 /* harmony import */ var _Console__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Console */ "./src/components/Console.tsx");
+/* harmony import */ var _appInfo_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../appInfo.json */ "./src/appInfo.json");
+var _appInfo_json__WEBPACK_IMPORTED_MODULE_5___namespace = /*#__PURE__*/__webpack_require__.t(/*! ../appInfo.json */ "./src/appInfo.json", 1);
 var __extends = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -35115,6 +35125,7 @@ var __spreadArrays = (undefined && undefined.__spreadArrays) || function () {
 
 
 
+
 ;
 ;
 ;
@@ -35122,8 +35133,8 @@ var __spreadArrays = (undefined && undefined.__spreadArrays) || function () {
 ;
 // Globals
 var GraphState = {
-    IMPOSSIBLE: { block: -2, port: -2 },
-    UNCONNECTED: { block: -1, port: -1 },
+    IMPOSSIBLE: { block: -2, port: -2, value: null },
+    UNCONNECTED: { block: -1, port: -1, value: null },
 };
 // Class definitions
 var WorkSpaceGraph = /** @class */ (function () {
@@ -35220,8 +35231,8 @@ var WorkSpaceGraph = /** @class */ (function () {
         if (output > this.outputGraph[from].length || input > this.inputGraph[to].length) {
             throw "OutOfBoundBucketException";
         }
-        this.outputGraph[from][output] = { block: to, port: input };
-        this.inputGraph[to][input] = { block: from, port: output };
+        this.outputGraph[from][output] = { block: to, port: input, value: null };
+        this.inputGraph[to][input] = { block: from, port: output, value: null };
     };
     WorkSpaceGraph.prototype.removeEdge = function (key, index) {
         if (key > this.size) {
@@ -35267,6 +35278,22 @@ var WorkSpaceGraph = /** @class */ (function () {
             });
             return output;
         }
+    };
+    WorkSpaceGraph.prototype.getUnconnectedInputs = function () {
+        var output = [];
+        var _loop_1 = function (i) {
+            this_1.inputGraph[i].forEach(function (value, index) {
+                output.push([i, 0]);
+                if (value == GraphState.UNCONNECTED) {
+                    output[output.length - 1][1] += 1;
+                }
+            });
+        };
+        var this_1 = this;
+        for (var i = 0; i < this.size; ++i) {
+            _loop_1(i);
+        }
+        return output;
     };
     return WorkSpaceGraph;
 }());
@@ -35357,6 +35384,7 @@ var WorkSpace = /** @class */ (function (_super) {
                         previousState.blocks[d.block].pendingTransformations.push({
                             block: d.block,
                             port: d.port,
+                            value: d.value,
                             wire: d.port,
                             x: dx,
                             y: dy,
@@ -35439,6 +35467,86 @@ var WorkSpace = /** @class */ (function (_super) {
                 zoom: _this.state.zoom - 0.1,
             });
         };
+        _this.runProject = function () {
+            if (_this.verifyProject().length != 0) {
+                return false;
+            }
+            return true;
+        };
+        _this.verifyProject = function () {
+            var errors = [];
+            // Ensure that there are no blocks with unassigned inputs
+            // Check 1: Make sure that Alice's value was set
+            if (_this.state.graph.outputGraph[0][0].value == null) {
+                errors.push("\u00a0\u00a0> Alice has not been given a message, use command 'alice <message>'");
+            }
+            // Check 2: Find unassigned inputs
+            var missingInputs = _this.state.graph.getUnconnectedInputs();
+            if (missingInputs.length > 0) {
+                missingInputs.forEach(function (value) {
+                    if (value[1] > 0) {
+                        var blockName = _this.state.blockElements[value[0]].construct.blockName;
+                        errors.push("\u00a0\u00a0> Block " + blockName + " has " + value[1] + " unconnected inputs, make sure that all inputs are connected with a wire");
+                    }
+                });
+            }
+            if (errors.length > 0) {
+                errors.unshift(errors.length + " errors found: ");
+            }
+            return errors;
+        };
+        _this.handleConsoleCommand = function (command) {
+            var tokenized = command.split(" ");
+            var keyword = tokenized[0];
+            if (!(keyword in _appInfo_json__WEBPACK_IMPORTED_MODULE_5__.console)) {
+                return ["Command not recognized, type 'help' for help"];
+            }
+            if (keyword == "help") {
+                var commandList_1 = _appInfo_json__WEBPACK_IMPORTED_MODULE_5__.console;
+                return Object.keys(commandList_1).map(function (name) {
+                    var tab = "";
+                    for (var i = name.length; i < 9; ++i) {
+                        tab += "\u00a0";
+                    }
+                    return name + tab + commandList_1[name];
+                });
+            }
+            if (keyword == "alice") {
+                tokenized.shift();
+                if (tokenized.length == 0) {
+                    return ["Missing a value, use 'alice <value>'"];
+                }
+                else {
+                    var message = tokenized.join(" ");
+                    _this.state.graph.outputGraph[0][0].value = message;
+                    return ["Alice will send the message: " + message];
+                }
+            }
+            if (keyword == "run") {
+                if (_this.runProject()) {
+                    return ["Project run successfully, use command 'bob' to see what message Bob received from Alice."];
+                }
+                else {
+                    return ["Project failed to run, use 'verify' to track down errors in your project before running."];
+                }
+            }
+            if (keyword == "verify") {
+                var errors = _this.verifyProject();
+                if (errors.length > 0) {
+                    return errors;
+                }
+                return ["No errors found! Run your project with 'run'"];
+            }
+            if (keyword == "bob") {
+                if (_this.state.graph.inputGraph[1][0].value == null) {
+                    return ["Bob has not received a message yet, run the project with command 'run' first"];
+                }
+                else {
+                    return [_this.state.graph.inputGraph[1][0].value.toString()];
+                }
+            }
+            return ["Command not implemented yet"];
+        };
         _this.WorkSpaceController = {
             onWireMove: _this.trackWireEnds,
             onBlockMove: _this.trackBlocks,
@@ -35498,7 +35606,7 @@ var WorkSpace = /** @class */ (function (_super) {
                     react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["MenuItem"], { data: { key: index }, onClick: function (e, data, target) { _this.toolbarNewBlockHandler(_this.state.blockElements[data.key].construct); } }, "Duplicate Block"),
                     react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["MenuItem"], { data: { key: index }, onClick: _this.showBlockInfoHandler }, "Block Info")));
             }),
-            react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_Console__WEBPACK_IMPORTED_MODULE_4__["default"], null),
+            react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_Console__WEBPACK_IMPORTED_MODULE_4__["default"], { onCommand: this.handleConsoleCommand }),
             react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_ToolBar__WEBPACK_IMPORTED_MODULE_3__["default"], { onNewBlock: this.toolbarNewBlockHandler }),
             react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["ContextMenu"], { id: "workspace" },
                 react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_contextmenu__WEBPACK_IMPORTED_MODULE_1__["MenuItem"], { onClick: this.zoomIn }, "Zoom In"),

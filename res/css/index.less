@@ -331,6 +331,8 @@ div#console {
     display: flex;
     flex-direction: column;
     align-items: stretch;
+    box-shadow: @box-shadow-med;
+    padding-bottom: @sml-spacing;
 
     #console-head {
         text-align: left;
@@ -340,6 +342,14 @@ div#console {
         padding: @xsm-spacing @sml-spacing;
         font-size: @sml-text;
         margin-bottom: @sml-spacing;
+    }
+    
+    #console-body {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        overflow-y: auto;
+        flex-grow: 1;
     }
 
     .console-line {

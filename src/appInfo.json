@@ -3,5 +3,12 @@
     "configurable": {
         "gridSize": 25,
         "ps1": "$>"
+    },
+    "console": {
+        "help" : "Brings up the help menu",
+        "run" : "Runs the project",
+        "alice" : "Set the input message for the Alice block, accepts a string or a number",
+        "bob" : "Display the message that Bob receives from Alice after running the project",
+        "verify" : "Checks the block configuration for errors"
     }
 }

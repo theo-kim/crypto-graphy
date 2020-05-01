@@ -19,7 +19,7 @@ export default class ControlMenu extends React.Component<IProps, IState> {
         { label : "File", subOptions : ["New Project", "New Module", "Import", "Export", "Preferences", "Example Project"] },
         { label : "Edit", subOptions : ["Undo", "Redo", "Export"] },
         { label : "Run", subOptions : ["Module", "Project", "Debugger"] },
-        { label : "View", subOptions : ["Toolbar"] }
+        { label : "View", subOptions : ["Toolbar", "Zoom In", "Zoom Out"] }
     ];
 
     constructor(props : {}) {
@@ -51,8 +51,8 @@ export default class ControlMenu extends React.Component<IProps, IState> {
                                     <ClickAwayListener onClickAway={() => this.showSubMenu(-1)}
                                         className={"sub-menu " + (this.state.controlMenuSelected == index ? "visible" : "")}
                                         key={index}>
-                                        {element.subOptions.map((element : string) => {
-                                            return <div>{element}</div>;
+                                        {element.subOptions.map((element : string, index: number) => {
+                                            return <div key={index}>{element}</div>;
                                         })}
                                     </ClickAwayListener>
                                 ) : null
