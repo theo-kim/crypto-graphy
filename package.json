@@ -20,6 +20,8 @@
     "react-contextmenu": "^2.13.0",
     "react-dom": "^16.13.1",
     "react-draggable": "^4.3.1",
+    "react-resizable": "^1.10.1",
+    "react-tooltip": "^4.2.5",
     "tslib": "^1.11.1"
   },
   "devDependencies": {

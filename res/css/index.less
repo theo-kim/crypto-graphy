@@ -174,7 +174,27 @@ body {
         -moz-user-select: none; /* Old versions of Firefox */
             -ms-user-select: none; /* Internet Explorer/Edge */
                 user-select: none; /* Non-prefixed version, currently
-                                    supported by Chrome, Opera and Firefox */
+                                  supported by Chrome, Opera and Firefox */
+        
+        &.disabled {
+            input {
+                pointer-events: none;
+            }
+        }
+        
+        input {
+            border: none;
+            background: @white;
+            width: 40px;
+            font-size: @sml-text;
+            text-align: center;
+            &:focus {
+                outline: none;
+            }
+            &:invalid {
+                background: #FFBABA;
+            }
+        }
     }
 
     .input {
@@ -278,6 +298,7 @@ body {
             display:flex;
             flex-wrap:wrap;
             flex-direction:row;
+            justify-content: center;
             .toolbar-section-name {
                 flex-grow: 1;
                 padding: @xsm-spacing @sml-spacing;

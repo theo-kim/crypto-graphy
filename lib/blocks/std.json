@@ -218,7 +218,7 @@
     },
     "Hashing" : {
         "MD5" : {
-            "operation" : "crypto.MD5(0)",
+            "operation" : "crypto.MD5(0, util.len(0), 1)",
             "description": "Hashes a variable length input into a 128-bit hash value.",
             "label": "MD5",
             "format": {
@@ -227,20 +227,21 @@
                     {
                         "side": "left",
                         "position": 1,
-                        "format": "int"
+                        "format": "bytearr"
                     }
                 ],
                 "outputs" : [
                     {
                         "side": "right",
                         "position": 1,
-                        "format": "int"
+                        "format": "bytearr",
+                        "size": 16
                     }
                 ]
             }
         },
         "SHA1" : {
-            "operation" : "crypto.SHA1(0)",
+            "operation" : "crypto.SHA1(0, util.len(0), 1)",
             "description": "Hashes a variable length input into a 160-bit hash value.",
             "label": "SHA1",
             "format": {
@@ -249,20 +250,21 @@
                     {
                         "side": "left",
                         "position": 1,
-                        "format": "int"
+                        "format": "bytearr"
                     }
                 ],
                 "outputs" : [
                     {
                         "side": "right",
                         "position": 1,
-                        "format": "int"
+                        "format": "bytearr",
+                        "size": 20
                     }
                 ]
             }
         },
         "SHA256" : {
-            "operation" : "crypto.SHA256(0)",
+            "operation" : "crypto.SHA256(0, util.len(0), 1)",
             "description": "Hashes a variable length input into a 256-bit hash value.",
             "label": "SHA256",
             "format": {
@@ -271,14 +273,15 @@
                     {
                         "side": "left",
                         "position": 1,
-                        "format": "int"
+                        "format": "bytearr"
                     }
                 ],
                 "outputs" : [
                     {
                         "side": "right",
                         "position": 1,
-                        "format": "int"
+                        "format": "bytearr",
+                        "size": 32
                     }
                 ]
             }

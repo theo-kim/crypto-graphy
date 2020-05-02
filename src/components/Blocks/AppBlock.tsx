@@ -65,7 +65,7 @@ class AppBlock extends React.Component<IAppBlockProps, {}> {
             <Block 
                 {...this.props.template}
                 label={this.props.label}
-                onInit={(block, type, inputs) => { this.props.onInit(block, this.props.type, inputs) }}
+                onInit={(block, type, inputs, ref) => { this.props.onInit(block, this.props.type, inputs, ref) }}
                 onBlockMove={this.props.onBlockMove}
                 onWireMove={this.props.onWireMove}
                 onDestroy={this.props.onDestroy}

@@ -26,7 +26,7 @@ interface IPropsCallback {
     onWireMove: (key : number,  index : number, coords : [number, number]) => void;
     onBlockMove : (key : number, coords : [number, number]) => void;
     onDrag : (key : number, coords : [number, number]) => void;
-    onInit : (block: IPropsReal, type: Function, inputs : Array<[number, number]>) => void;
+    onInit : (block: IPropsReal, type: Function, inputs : Array<[number, number]>, ref : HTMLDivElement) => void;
     onDestroy : (key : number) => void;
     onMoveWithConnectedWire: (key : number) => IOnWireMoveEvent[];
 }
@@ -63,6 +63,8 @@ export default class Block extends React.Component<IProps, IState> {
     };
 
     forceWireRender: number[] = [];
+
+    reference : HTMLDivElement;
 
     constructor(props : IProps) {
         super(props);
@@ -195,7 +197,7 @@ export default class Block extends React.Component<IProps, IState> {
             size : this.props.size,
             outputs : this.props.outputs,
             inputs : this.props.inputs,
-        }, this.constructor, this.state.inputPos);
+        }, this.constructor, this.state.inputPos, this.reference);
     }
 
     componentWillUnmount = () => {
@@ -279,7 +281,7 @@ export default class Block extends React.Component<IProps, IState> {
                         width: this.props.size[0],
                         height: this.props.size[1]
                     }}>
-                    <span className="label">{this.props.label}</span>
+                    <div className={"label" + (this.props.dead ? " disabled" : "")} ref={(ref) => this.reference = ref} dangerouslySetInnerHTML={{ __html: this.props.label }}></div>
                     {
                         this.state.inputPos.map((pos : [number, number], index: number) => {
                             if (this.props.inputs[index].side == "top") { // Top

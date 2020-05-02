@@ -2,7 +2,8 @@ import * as React from 'react';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 
 import Block, { IPropsCallback as BlockPropsCallback, IPropsReal as IBlockProps, IOnWireMoveEvent } from './Blocks/Block'
-import { ILoaderFunction, StdBlocks as BasicBlocks, GetRuntime, IModule } from './Blocks/BasicBlocks';
+import { ILoaderFunction, BlockLibrary } from './Blocks/BlockLoad';
+import { GetRuntime, IModule } from './Blocks/LibLoad';
 import ToolBar from './ToolBar';
 import Console from './Console';
 
@@ -48,6 +49,7 @@ interface IState {
 
 interface IBlockRender {
     construct: ILoaderFunction;
+    ref?: HTMLDivElement;
     initialPosition: [ number, number ];
 };
 
@@ -223,8 +225,14 @@ class WorkSpaceGraph {
         return output;
     }
 
+    resetGraph() {
+        this.inputGraph.forEach((block, index) => index === 0 ? null : block.forEach(node => node.value = undefined));
+        this.outputGraph.forEach((block, index) => index === 0 ? null : block.forEach(node => node.value = undefined));
+    }
+
     resolveGraph(blocks : IBlockRender[]) : Promise<boolean> {
         return GetRuntime().then((lib) => {
+            this.resetGraph();
             this.resolveInputs(lib, 1, blocks);
             return Promise.resolve(true);    
         }, (e) => {
@@ -250,9 +258,15 @@ class WorkSpaceGraph {
     resolveOutputs(lib: IModule, key : number, blocks : IBlockRender[]) {
         // Resolve the block's inputs
         this.resolveInputs(lib, key, blocks);
-        // Use resolver function to map inputs to outputs
-        this.inputGraph[key].map((n : IWorkSpaceGraphNode) => console.log(n.value))
-        let outputs : any[] = blocks[key].construct.resolver(lib, this.inputGraph[key].map((n : IWorkSpaceGraphNode) => n.value));
+        let outputs : any[];
+        if (blocks[key].construct.packageName == "Constants") {
+            let val : string | number = (blocks[key].ref.firstElementChild as HTMLInputElement).value;
+            outputs = blocks[key].construct.resolver(lib, [ val ]);
+        }
+        else {
+            // Use resolver function to map inputs to outputs
+            outputs = blocks[key].construct.resolver(lib, this.inputGraph[key].map((n : IWorkSpaceGraphNode) => n.value));
+        }
         outputs.forEach((o : any, index: number) => {
             this.outputGraph[key][index].value = o as (number | string | Uint8Array);
         });
@@ -278,7 +292,7 @@ class WorkSpace extends React.Component<{}, IState> {
         });
     }
 
-    newBlock = (block : IBlock, type: Function, inputs : Array<[number, number]>) => {
+    newBlock = (block : IBlock, type: Function, inputs : Array<[number, number]>, ref : HTMLDivElement) => {
         this.setState((previousState : IState, props : {}) => {
             previousState.graph.addElement(block.inputs.length, block.outputs.length, block.id);
             let b : IEventTracker = {
@@ -300,6 +314,8 @@ class WorkSpace extends React.Component<{}, IState> {
                 });
             });
 
+            previousState.blockElements[block.id].ref = ref;
+
             // console.log("New Block Registered with " + inputs.length + " inputs!");
             
             return null;
@@ -311,7 +327,6 @@ class WorkSpace extends React.Component<{}, IState> {
             // console.log("Block #" + key + " moved to position " + coords[0] + ", " + coords[1]);
             previousState.blocks[key].position[0] = coords[0];
             previousState.blocks[key].position[1] = coords[1];
-            console.log(coords);
             return previousState;
         });
     }   
@@ -394,7 +409,7 @@ class WorkSpace extends React.Component<{}, IState> {
 
     // delete block
     deleteBlockHandler = (e : any, data : any, target : any) => {
-        if (this.state.blockElements[data.key].construct == BasicBlocks["Inputs"]["Alice"] || this.state.blockElements[data.key].construct == BasicBlocks["Outputs"]["Bob"]) {
+        if (this.state.blockElements[data.key].construct == BlockLibrary["Inputs"]["Alice"] || this.state.blockElements[data.key].construct == BlockLibrary["Outputs"]["Bob"]) {
             alert("You cannot delete Alice or Bob");
             return;
         }
@@ -488,6 +503,14 @@ class WorkSpace extends React.Component<{}, IState> {
                 }
             })
         }
+        // Check 3: Find faulty inputs
+        this.state.blockElements.forEach((el) => {
+            if (el.ref.firstElementChild != null) {
+                if (!(el.ref.firstElementChild as HTMLInputElement).checkValidity()) {
+                    errors.push("\u00a0\u00a0> Block " + el.construct.blockName + " has an invalid input value")
+                }
+            }
+        })
 
         if (errors.length > 0) {
             errors.unshift(errors.length + " errors found: ");
@@ -542,7 +565,27 @@ class WorkSpace extends React.Component<{}, IState> {
                 return [ "Bob has not received a message yet, run the project with command 'run' first" ]
             }
             else {
-                return [ "Bob received the message: " + this.state.graph.inputGraph[1][0].value.toString() ]
+                let bob = this.state.graph.inputGraph[1][0].value;
+                let bobTranslated : string | number = "";
+                if (typeof bob === "string" || typeof bob === "number") {
+                    bobTranslated = bob;
+                }
+                else {
+                    bob.forEach(byte => {
+                        let chr = String.fromCharCode(byte);
+                        if (chr.match(/[a-zA-Z0-9]/i)) {
+                            bobTranslated += String.fromCharCode(byte);
+                        }
+                    })
+                    if ((bobTranslated as string).length != bob.length) {
+                        bobTranslated = ""
+                        bob.forEach(byte => {
+                            bobTranslated += "0" + (byte.toString(16)).slice(-2);
+                        });
+                        bobTranslated = "0x" + bobTranslated;
+                    }
+                }
+                return [ "Bob received the message: " + bobTranslated ]
             }
         }
         return [ "Command not implemented yet" ];
@@ -558,8 +601,8 @@ class WorkSpace extends React.Component<{}, IState> {
     };
 
     defaultBlocks : IBlockRender[] = [ 
-        { construct: BasicBlocks["Inputs"]["Alice"], initialPosition: [ 125, 125 ] },
-        { construct: BasicBlocks["Outputs"]["Bob"], initialPosition: [ 325, 325 ] },
+        { construct: BlockLibrary["Inputs"]["Alice"], initialPosition: [ 125, 125 ] },
+        { construct: BlockLibrary["Outputs"]["Bob"], initialPosition: [ 325, 325 ] },
     ];
 
     domRef : HTMLDivElement = null;
@@ -580,6 +623,7 @@ class WorkSpace extends React.Component<{}, IState> {
     render() {
         return (
             <ContextMenuTrigger
+                holdToDisplay={-1}
                 id={ "workspace" }
                 attributes={{className : "workspace"}}>
                 <div className="zoom-controller" 

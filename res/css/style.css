@@ -109,7 +109,23 @@ body {
   /* Internet Explorer/Edge */
   user-select: none;
   /* Non-prefixed version, currently
-                                    supported by Chrome, Opera and Firefox */
+                                  supported by Chrome, Opera and Firefox */
+}
+.block .label.disabled input {
+  pointer-events: none;
+}
+.block .label input {
+  border: none;
+  background: #f0f0f0;
+  width: 40px;
+  font-size: 16px;
+  text-align: center;
+}
+.block .label input:focus {
+  outline: none;
+}
+.block .label input:invalid {
+  background: #FFBABA;
 }
 .block .input {
   background-color: grey;
@@ -204,6 +220,7 @@ body {
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
+  justify-content: center;
 }
 #toolbar #toolbar-pallette .toolbar-section .toolbar-section-name {
   flex-grow: 1;
