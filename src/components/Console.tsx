@@ -5,7 +5,7 @@ import update from 'immutability-helper';
 import appInfo from '../appInfo.json';
 
 interface IProps {
-    onCommand: (command : string) => string[];
+    onCommand: (command : string, furtherInfoHook : (msg: string) => void) => string[];
 }
 
 interface IState {
@@ -28,13 +28,21 @@ class Console extends React.Component<IProps, IState> {
         this.scrollToBottom();
     }
 
+    hook = (msg: string) => {
+        this.setState(() => {
+            return {
+                lines: update(this.state.lines, { $push: [ msg ] })
+            }
+        });
+    }
+
     handleSpecialKeys = (e : React.KeyboardEvent) => {
         if (e.key === 'Enter') {
             let command : string = (e.target as HTMLInputElement).value;
             let line : string = appInfo.configurable.ps1 + " " + command;
             (e.target as HTMLInputElement).value = "";
             this.setState(() => {
-                let response : string[] = this.props.onCommand(command);
+                let response : string[] = this.props.onCommand(command, this.hook);
                 response.unshift(line);
                 return {
                     lines: update(this.state.lines, { $push: response })

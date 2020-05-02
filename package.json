@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "fp-ts": "^2.5.4",
+    "fs": "0.0.1-security",
     "immutability-helper": "^3.0.2",
     "io-ts": "^2.2.1",
     "lodash": "^4.17.15",
@@ -25,6 +26,7 @@
     "@types/lodash": "^4.14.150",
     "@types/react": "^16.9.34",
     "@types/react-dom": "^16.9.6",
+    "@wasm-tool/emscripten": "^1.0.0",
     "css-loader": "^3.5.2",
     "less": "^3.11.1",
     "less-loader": "^5.0.0",

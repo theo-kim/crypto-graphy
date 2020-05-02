@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 
 import Block, { IPropsCallback as BlockPropsCallback, IPropsReal as IBlockProps, IOnWireMoveEvent } from './Blocks/Block'
-import { ILoaderFunction, StdBlocks as BasicBlocks } from './Blocks/BasicBlocks';
+import { ILoaderFunction, StdBlocks as BasicBlocks, GetRuntime, IModule } from './Blocks/BasicBlocks';
 import ToolBar from './ToolBar';
 import Console from './Console';
 
@@ -222,6 +222,41 @@ class WorkSpaceGraph {
         }
         return output;
     }
+
+    resolveGraph(blocks : IBlockRender[]) : Promise<boolean> {
+        return GetRuntime().then((lib) => {
+            this.resolveInputs(lib, 1, blocks);
+            return Promise.resolve(true);    
+        }, (e) => {
+            console.log(e);
+            return Promise.resolve(false);
+        });
+    }
+
+    resolveInputs(lib : IModule, key : number, blocks : IBlockRender[]) {
+        // Resolve each input
+        this.inputGraph[key].forEach((input: IWorkSpaceGraphNode, index: number) => {
+            if (input.value == null) {
+                // if the connected output is null, resolve that block's outputs
+                if (this.outputGraph[input.block][input.port].value == null) {
+                    this.resolveOutputs(lib, input.block, blocks);
+                }
+                // Assign connected output to the input
+                input.value = this.outputGraph[input.block][input.port].value;
+            }
+        });
+    }
+    
+    resolveOutputs(lib: IModule, key : number, blocks : IBlockRender[]) {
+        // Resolve the block's inputs
+        this.resolveInputs(lib, key, blocks);
+        // Use resolver function to map inputs to outputs
+        this.inputGraph[key].map((n : IWorkSpaceGraphNode) => console.log(n.value))
+        let outputs : any[] = blocks[key].construct.resolver(lib, this.inputGraph[key].map((n : IWorkSpaceGraphNode) => n.value));
+        outputs.forEach((o : any, index: number) => {
+            this.outputGraph[key][index].value = o as (number | string | Uint8Array);
+        });
+    }
 }
 
 class WorkSpace extends React.Component<{}, IState> {
@@ -257,9 +292,7 @@ class WorkSpace extends React.Component<{}, IState> {
             else {
                 previousState.blocks.push({...block, ...b});
             }
-            console.log(block.position);
             inputs.forEach((value : [number, number], index : number) => {
-                console.log(value);
                 previousState.inputs.push({
                     block: block.id,
                     index: index,
@@ -401,6 +434,14 @@ class WorkSpace extends React.Component<{}, IState> {
         });
     };
 
+    duplicateBlockHandler = (e: any, data: any, target: any) => {
+        if (this.state.blockElements[data.key].construct.blockName == "Alice" || this.state.blockElements[data.key].construct.blockName == "Bob") {
+            alert("You cannot duplicate Alice or Bob blocks");
+            return;        
+        }
+        this.toolbarNewBlockHandler(this.state.blockElements[data.key].construct);
+    }
+
     // Show a description of the block
     showBlockInfoHandler = (e : any, data : any, target : any) => {
         let loader : ILoaderFunction = this.state.blockElements[data.key].construct;
@@ -423,11 +464,11 @@ class WorkSpace extends React.Component<{}, IState> {
         })
     }
 
-    runProject = () : boolean => {
+    runProject = () : Promise<boolean> => {
         if (this.verifyProject().length != 0) {
-            return false;
+            return Promise.resolve(false);
         }
-        return true;
+        return this.state.graph.resolveGraph(this.state.blockElements);
     }
 
     verifyProject = () : string[] => {
@@ -454,7 +495,7 @@ class WorkSpace extends React.Component<{}, IState> {
         return errors;
     }
 
-    handleConsoleCommand = (command : string) : string[] => {
+    handleConsoleCommand = (command : string, furtherInfoHook : (msg : string) => void) : string[] => {
         let tokenized : string[] = command.split(" ");
         let keyword : string = tokenized[0];
         if (!(keyword in appInfo.console)) {
@@ -482,12 +523,12 @@ class WorkSpace extends React.Component<{}, IState> {
             }
         }
         if (keyword == "run") {
-            if (this.runProject()) {
-                return [ "Project run successfully, use command 'bob' to see what message Bob received from Alice." ]
-            }
-            else {
-                return [ "Project failed to run, use 'verify' to track down errors in your project before running." ]
-            }
+            this.runProject().then((status) => {
+                if (status) furtherInfoHook("Project succeeded, check output value with command 'bob'.");
+                else furtherInfoHook("Project failed, verify it with command 'verify'.");
+            })
+            
+            return [ "Running project..."];
         }
         if (keyword == "verify") {
             let errors : string[] = this.verifyProject();
@@ -501,7 +542,7 @@ class WorkSpace extends React.Component<{}, IState> {
                 return [ "Bob has not received a message yet, run the project with command 'run' first" ]
             }
             else {
-                return [ this.state.graph.inputGraph[1][0].value.toString() ]
+                return [ "Bob received the message: " + this.state.graph.inputGraph[1][0].value.toString() ]
             }
         }
         return [ "Command not implemented yet" ];
@@ -537,7 +578,6 @@ class WorkSpace extends React.Component<{}, IState> {
     }
     
     render() {
-        // console.log("Workspace render");
         return (
             <ContextMenuTrigger
                 id={ "workspace" }
@@ -576,7 +616,7 @@ class WorkSpace extends React.Component<{}, IState> {
                                 <MenuItem data={{key: index}} onClick={this.deleteBlockHandler}>
                                     Delete Block
                                 </MenuItem>
-                                <MenuItem data={{key: index}} onClick={(e : any, data : any, target : any) => { this.toolbarNewBlockHandler(this.state.blockElements[data.key].construct); }}>
+                                <MenuItem data={{key: index}} onClick={this.duplicateBlockHandler}>
                                     Duplicate Block
                                 </MenuItem>
                                 <MenuItem data={{key: index}} onClick={this.showBlockInfoHandler}>

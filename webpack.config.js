@@ -5,6 +5,7 @@ module.exports = {
   plugins: [new MiniCssExtractPlugin({
     filename: '../res/css/style.css',
   })],
+  externals: ["fs"],
   entry: {
     ts: './src/index.tsx',
     less: './res/css/index.less'

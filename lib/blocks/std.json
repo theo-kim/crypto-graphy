@@ -28,7 +28,7 @@
             }
         },
         "Inequality" : {
-            "operation" : "std.EQ(0, 1, util.len(0))",
+            "operation" : "std.NEQ(0, 1, util.len(0))",
             "description": "Performs a check for inequality on two integers, returns a 1 or 0",
             "label": "≠",
             "format": {
