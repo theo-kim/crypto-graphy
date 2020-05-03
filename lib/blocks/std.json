@@ -500,7 +500,7 @@
         }
     },
     "Pseudo-Randomness" : {
-        "Psuedo-Random Generator" : {
+        "Pseudo-Random Generator" : {
             "operation" : "util.assign(util.PRG(0), 1)",
             "description": "Uses a random seed to generate a pseudo-random byte (8-bits). Not deterministic, running multiple times will yield different values",
             "label": "PRG",
@@ -556,70 +556,24 @@
         }
     },
     "Symmetric Encryption" : {
-        "AES CBC" : {
-            "operation" : "util.assign(util.aes_cbc_encrypt(0, 1, 2, 3), 4)",
-            "description": "Given a random key and an initialization vector, produce a an encrypted ciphertext for the given plaintext",
-            "label": "AES-CBC Enc",
+        "AES Encrypt" : {
+            "operation" : "util.assign(util.aes_encrypt(0, 1, 2), 3)",
+            "description": "Given an initialized mode of operation, produce an encrypted ciphertext for the given plaintext. Requires an AES mode of operation to be connected.",
+            "label": "AES Enc",
             "format": {
                 "size": [100, 100],
                 "inputs": [
                     {
                         "side": "left",
-                        "position": 2,
-                        "format": "bytearr",
-                        "label": "Plaintext"
-                    },
-                    {
-                        "side": "bottom",
                         "position": 1,
-                        "format": "bytearr",
-                        "label": "Key",
-                        "size": 16
-                    },
-                    {
-                        "side": "bottom",
-                        "position": 3,
-                        "format": "bytearr",
-                        "label": "Initialization Vector",
-                        "size": 16
-                    }
-                ],
-                "outputs" : [
-                    {
-                        "side": "right",
-                        "position": 1,
-                        "format": "bytearr",
-                        "label": "Ciphertext",
-                        "size": 256
-                    },
-                    {
-                        "side": "right",
-                        "position": 3,
-                        "format": "number",
-                        "label": "Ciphertext Length"
-                    }
-                ]
-            }
-        },
-        "AES CTR" : {
-            "operation" : "util.assign(util.aes_ctr_encrypt(0, 1, 2), 3)",
-            "description": "Given a random key and an initialization vector, produce a an encrypted ciphertext for the given plaintext",
-            "label": "AES-CTR Enc",
-            "format": {
-                "size": [100, 100],
-                "inputs": [
-                    {
-                        "side": "left",
-                        "position": 2,
                         "format": "bytearr",
                         "label": "Plaintext"
                     },
                     {
                         "side": "bottom",
                         "position": 2,
-                        "format": "bytearr",
-                        "label": "Key",
-                        "size": 16
+                        "format": "enum-aes",
+                        "label": "Mode of Operation"
                     }
                 ],
                 "outputs" : [
@@ -671,70 +625,24 @@
         }
     },
     "Symmetric Decryption" : {
-        "AES CBC" : {
-            "operation" : "util.assign(util.aes_cbc_decrypt(0, 1, 2, 3), 4)",
-            "description": "Given a key, initialization value, and ciphertext decode a plaintext message",
-            "label": "AES-CBC Dec",
+        "AES Descrypt" : {
+            "operation" : "util.assign(util.aes_decrypt(0, 1, 2), 3)",
+            "description": "Given an initialized mode of operation (the same as used to encrypt the message), decrypt a ciphertext to the original plaintext message",
+            "label": "AES Dec",
             "format": {
                 "size": [100, 100],
                 "inputs": [
                     {
                         "side": "left",
-                        "position": 2,
-                        "format": "bytearr",
-                        "label": "CipherText"
-                    },
-                    {
-                        "side": "bottom",
                         "position": 1,
-                        "format": "bytearr",
-                        "label": "Key",
-                        "size": 16
-                    },
-                    {
-                        "side": "bottom",
-                        "position": 3,
-                        "format": "bytearr",
-                        "label": "Initialization Vector",
-                        "size": 16
-                    }
-                ],
-                "outputs" : [
-                    {
-                        "side": "right",
-                        "position": 1,
-                        "format": "bytearr",
-                        "label": "Plaintext",
-                        "size": 256
-                    },
-                    {
-                        "side": "right",
-                        "position": 3,
-                        "format": "number",
-                        "label": "Plaintext Length"
-                    }
-                ]
-            }
-        },
-        "AES CTR" : {
-            "operation" : "util.assign(util.aes_ctr_decrypt(0, 1, 2), 3)",
-            "description": "Given a key and a ciphertext decode a plaintext message",
-            "label": "AES-CTR Dec",
-            "format": {
-                "size": [100, 100],
-                "inputs": [
-                    {
-                        "side": "left",
-                        "position": 2,
                         "format": "bytearr",
                         "label": "Ciphertext"
                     },
                     {
                         "side": "bottom",
                         "position": 2,
-                        "format": "bytearr",
-                        "label": "Key",
-                        "size": 16
+                        "format": "enum-aes",
+                        "label": "Mode of Operation"
                     }
                 ],
                 "outputs" : [
@@ -780,6 +688,97 @@
                         "position": 1,
                         "format": "bytearr",
                         "label": "Plaintext"
+                    }
+                ]
+            }
+        }
+    },
+    "Block Cipher Operation Modes" : {
+        "AES CBC" : {
+            "operation" : "util.prepare_cbc(0, 1, 2)",
+            "description": "Code Block Chaining mode of operation. Requires a 16-byte key and a 16-byte initialization vector",
+            "label": "CBC",
+            "format": {
+                "size": [100, 50],
+                "inputs": [
+                    {
+                        "side": "bottom",
+                        "position": 2,
+                        "format": "bytearr",
+                        "label": "Initialization Vector",
+                        "size": 16
+                    },
+                    {
+                        "side": "left",
+                        "position": 1,
+                        "format": "bytearr",
+                        "label": "Key",
+                        "size": 16
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "top",
+                        "position": 2,
+                        "format": "enum-aes",
+                        "label": "Operation Mode"
+                    }
+                ]
+            }
+        },
+        "AES CTR" : {
+            "operation" : "util.prepare_ctr(0, 1, 2)",
+            "description": "Counter Mode of Operation. Requires a 16 byte key and an initial counter value",
+            "label": "CTR",
+            "format": {
+                "size": [100, 50],
+                "inputs": [
+                    {
+                        "side": "bottom",
+                        "position": 2,
+                        "format": "number",
+                        "label": "Counter Initialization",
+                        "default": 0
+                    },
+                    {
+                        "side": "left",
+                        "position": 1,
+                        "format": "bytearr",
+                        "label": "Key",
+                        "size": 16
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "top",
+                        "position": 2,
+                        "format": "enum-aes",
+                        "label": "Operation Mode"
+                    }
+                ]
+            }
+        },
+        "AES ECB" : {
+            "operation" : "util.prepare_ecb(0, 1)",
+            "description": "Electronic Code Book Mode of Operation. Requires a 16 byte key. THIS IS NOT RECOMMENDED as it is the least secure mode of operation as it adds no randomness to the ciphertext",
+            "label": "ECB",
+            "format": {
+                "size": [100, 50],
+                "inputs": [
+                    {
+                        "side": "left",
+                        "position": 1,
+                        "format": "bytearr",
+                        "label": "Key",
+                        "size": 16
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "top",
+                        "position": 2,
+                        "format": "enum-aes",
+                        "label": "Operation Mode"
                     }
                 ]
             }

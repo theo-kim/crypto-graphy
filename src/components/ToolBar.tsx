@@ -46,16 +46,10 @@ export default class ToolBar extends React.Component<IProps, IState> {
                                                 marginTop: -$blockType.format.size[1] / 8,
                                                 marginBottom: -$blockType.format.size[1] / 8
                                             }}
-                                            data-tip
-                                            data-for={category + "-" + blockName}>
+                                            data-tip={BlockLibrary[category][blockName].blockName}
+                                            data-for="category">
                                             <$blockType.constructor icon={true} />
                                         </div>
-                                    );
-                                });
-                                let packageTooltips = Object.keys(BlockLibrary[category]).map((blockName : string, index: number) => {
-                                    let $blockType = BlockLibrary[category][blockName];
-                                    return (
-                                        <ReactTooltip effect="solid" key={index} id={category + "-" + blockName}>{BlockLibrary[category][blockName].blockName}</ReactTooltip>
                                     );
                                 });
                                 return (
@@ -63,11 +57,11 @@ export default class ToolBar extends React.Component<IProps, IState> {
                                         key={catIndex}>
                                         <div className="toolbar-section-name">{category}</div>
                                         { packageBlocks }
-                                        { packageTooltips }
                                     </div>
                                 );
                             }).filter((val) => { return val !== null; })
                         }
+                        <ReactTooltip effect="solid" id="category" />
                     </div>
                 </div>
             </Draggable>

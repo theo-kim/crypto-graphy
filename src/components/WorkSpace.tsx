@@ -312,11 +312,9 @@ class WorkSpaceGraph {
         // Resolve the block's inputs
         this.resolveInputs(lib, key, blocks, reporter);
         let outputs : any[], inputs : any[];
-        console.log(blocks[key].construct.blockName);
-        console.log("Inputs before call: " + this.inputGraph[key].map(v => v.value));
         if (blocks[key].construct.packageName == "Constants") {
             let val : string | number = (blocks[key].ref.firstElementChild as HTMLInputElement).value;
-            outputs = blocks[key].construct.resolver(lib, [ val ]);
+            outputs = blocks[key].construct.resolver(lib, [ val ], reporter);
         }
         else if (blocks[key].construct.blockName == "Eavesdropper") {
             outputs = this.inputGraph[key].map((n : IWorkSpaceGraphNode) => n.value);
@@ -325,10 +323,8 @@ class WorkSpaceGraph {
         else {
             // Use resolver function to map inputs to outputs
             inputs = this.inputGraph[key].map((n : IWorkSpaceGraphNode) => n.value);
-            outputs = blocks[key].construct.resolver(lib, inputs);
+            outputs = blocks[key].construct.resolver(lib, inputs, reporter);
         }
-        console.log(blocks[key].construct.blockName);
-        console.log("Output" + outputs);
         outputs.forEach((o : any, index: number) => {
             this.outputGraph[key][index].value = o as (number | string | Uint8Array);
         });
@@ -615,6 +611,10 @@ class WorkSpace extends React.Component<{}, IState> {
                     this.state.blocks[input.block].outputs[input.port].ref.className += " error";
                     errors.push("\u00a0\u00a0> Block " + this.state.blockElements[nodeIndex].construct.blockName + " has an input of type " + inputType + " but is connected to an output of type " + outputType);
                 }
+                else if (inputType.includes("enum") && inputType != outputType) {
+                    this.state.blocks[input.block].outputs[input.port].ref.className += " error";
+                    errors.push("\u00a0\u00a0> Block " + this.state.blockElements[nodeIndex].construct.blockName + " has an input of type " + inputType + " but is connected to an output of type " + outputType);
+                }
             })
         });
 
@@ -687,17 +687,13 @@ class WorkSpace extends React.Component<{}, IState> {
                 else {
                     bob.forEach(byte => {
                         let chr = String.fromCharCode(byte);
-                        if (chr.match(/[a-zA-Z0-9]/i)) {
-                            bobTranslated += String.fromCharCode(byte);
+                        if (chr.match(/[a-zA-Z0-9\ ]/i)) {
+                            bobTranslated += " '" + String.fromCharCode(byte) + "' ";
+                        }
+                        else {
+                            bobTranslated += " " + ("0" + (byte.toString(16))).slice(-2) + " ";
                         }
                     })
-                    if ((bobTranslated as string).length != bob.length) {
-                        bobTranslated = ""
-                        bob.forEach(byte => {
-                            bobTranslated += ("0" + (byte.toString(16))).slice(-2);
-                        });
-                        bobTranslated = "0x" + bobTranslated;
-                    }
                 }
                 return [ "Bob received the message: " + bobTranslated ]
             }

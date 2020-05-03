@@ -26,7 +26,7 @@ function ResolverLoader (operation: string, inputFormats: IPort[], outputFormats
     let nOutputs : number = outputFormats.length;
 
     // Match operation with library
-    return (lib: IModule, inputs: (number | string | Uint8Array)[]) : (number | string | Uint8Array)[] => {
+    return (lib: IModule, inputs: (number | string | Uint8Array)[], reporter: (msg: string) => void) : (number | string | Uint8Array)[] => {
         if (inputs.length != nInputs) {
             throw "RuntimeInputLengthException";
         }
@@ -37,7 +37,7 @@ function ResolverLoader (operation: string, inputFormats: IPort[], outputFormats
 
         CalculateRuntimeSize(libInputs, libOutputs);
 
-        CallLibFunction(lib, parsed, libInputs, libOutputs);
+        CallLibFunction(lib, parsed, libInputs, libOutputs, reporter);
 
         libOutputs.forEach(output => outputValues.push(output.value));
 
@@ -337,13 +337,16 @@ let Index : ILoaderFunction = BuiltInBlock(
         size: [50, 50],
         label: "[ ]",
     },
-    (lib : IModule, i : any[]) : any[] => { return [ i[0][i[1]] ]; },
+    (lib : IModule, i : any[]) : any[] => { 
+        let A = ConvertToArray(i[0]);
+        return [ A[i[1]] ];
+    },
 );
 
-let Append : ILoaderFunction = BuiltInBlock(
+let Concat : ILoaderFunction = BuiltInBlock(
     "Utility Blocks", 
-    "Append", 
-    "Block used to append a new byte to the end of a byte array. NOTE: only a byte will be pushed, therefore a number greater than 256 will not be pushed, only the least significant byte",
+    "Concat", 
+    "Block used to concat two arrays, a number to an array, or two numbers to a byte array. NOTE: when a number, the number will be converted to a byte array first (i.e. little endian) the the concat operation will be performed.",
     {
         outputs: [
         {
@@ -352,7 +355,7 @@ let Append : ILoaderFunction = BuiltInBlock(
             format: "bytearr",
             size: undefined,
             runtimeSize: undefined,
-            label: "nth Element"
+            label: "Combined"
         }],
         inputs: [{
             side: "left",
@@ -360,24 +363,81 @@ let Append : ILoaderFunction = BuiltInBlock(
             format: "bytearr",
             size: undefined,
             runtimeSize: undefined,
-            label: "Array"
+            label: "Element 1"
         },
         {
             side: "left",
             position: 3,
+            format: "bytearr",
+            size: undefined,
+            runtimeSize: undefined,
+            label: "Element 2"
+        }],
+        size: [50, 100],
+        label: "·⊕·",
+    },
+    (lib : IModule, i : any[]) : any[] => {
+        let L, R : Uint8Array;
+        L = ConvertToArray(i[0]);
+        R = ConvertToArray(i[1]);
+        
+        let concatted = new Uint8Array(L.length + R.length);
+        concatted.set(L);
+        concatted.set(R, L.length);
+
+        return [ concatted ];
+    },
+);
+
+let Slice : ILoaderFunction = BuiltInBlock(
+    "Utility Blocks", 
+    "Slice", 
+    "Block used to split an array into two halves at a given index. If the index is greater than the length of the array, the entire array is returned as the First Half and an empty array is returned as Second Half.",
+    {
+        outputs: [
+        {
+            side: "right",
+            position: 1,
+            format: "bytearr",
+            size: undefined,
+            runtimeSize: undefined,
+            label: "First Half"
+        },
+        {
+            side: "right",
+            position: 3,
+            format: "bytearr",
+            size: undefined,
+            runtimeSize: undefined,
+            label: "Second Half"
+        }],
+        inputs: [{
+            side: "left",
+            position: 2,
+            format: "bytearr",
+            size: undefined,
+            runtimeSize: undefined,
+            label: "Array"
+        },
+        {
+            side: "bottom",
+            position: 1,
             format: "number",
             size: undefined,
             runtimeSize: undefined,
-            label: "Byte"
+            label: "Split Index"
         }],
         size: [50, 100],
-        label: "→",
+        label: "✂",
     },
-    (lib : IModule, i : any[]) : any[] => { 
-        let n : Uint8Array = new Uint8Array(i[0].length + 1); 
-        n.set(i[0]);
-        n.set([ i[1] ], i[0].length)
-        return [ n ];
+    (lib : IModule, i : any[]) : any[] => {
+        let A = ConvertToArray(i[0]);
+        if (i[1] >= A.length) {
+            return [ A.subarray(0, A.length), new Uint8Array(0) ];
+        }
+        else {
+            return [ A.subarray(0, i[1]), A.subarray(i[1], A.length) ];
+        }
     },
 );
 
@@ -574,13 +634,13 @@ let Array : ILoaderFunction = BuiltInBlock(
     },
     (lib : IModule, i: string[]) : any[] => { 
         let arr = [ new Uint8Array(i[0].split(",").map(s => parseInt(s.replace(" ", "")))) ];
-        console.log(arr);
         return arr;
     }
 );
 
 StdBlocks["Constants"] = { Number, String, Array }
-StdBlocks["Utility Blocks"] = { Split, AsNumber, Length, Index, Loop, Condition, Append }
+StdBlocks["Array Manipulation"] = { AsNumber, Length, Concat, Slice, Index }
+StdBlocks["Flow Control"] = { Split, Condition, Loop }
 StdBlocks["Inputs"] = { Alice }
 StdBlocks["Outputs"] = { Bob }
 StdBlocks["Adversaries"] = { Eavesdropper, Intruder }
