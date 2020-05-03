@@ -3,7 +3,7 @@ import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 
 import Block, { IPropsCallback as BlockPropsCallback, IPropsReal as IBlockProps, IOnWireMoveEvent } from './Blocks/Block'
 import { ILoaderFunction, BlockLibrary } from './Blocks/BlockLoad';
-import { GetRuntime, IModule } from './Blocks/LibLoad';
+import { GetRuntime, IModule, generators } from './Blocks/LibLoad';
 import ToolBar from './ToolBar';
 import Console from './Console';
 
@@ -64,6 +64,8 @@ class WorkSpaceGraph {
     size : number = 0;
     outputGraph : IWorkSpaceGraphNode[][] = []; // Adjacency list
     inputGraph : IWorkSpaceGraphNode[][] = [];
+
+    callStack : number[] = [];
 
     constructor () {}
     
@@ -212,28 +214,46 @@ class WorkSpaceGraph {
         }
     }
 
-    getUnconnectedInputs() : [number, number][] {
-        let output : [number, number][] = [];
+    getUnconnectedInputs() : [number, number[]][] {
+        let output : [number, number[]][] = [];
         for (let i = 0; i < this.size; ++i) {
+            if (this.inputGraph[i] == null) continue;
             this.inputGraph[i].forEach((value : IWorkSpaceGraphNode, index: number) => {
-                output.push([i, 0]);
+                output.push([i, []]);
                 if (value == GraphState.UNCONNECTED) {
-                    output[output.length - 1][1] += 1;
+                    output[output.length - 1][1].push(index);
                 }
             })
         }
         return output;
     }
 
-    resetGraph() {
-        this.inputGraph.forEach((block, index) => index === 0 ? null : block.forEach(node => node.value = undefined));
-        this.outputGraph.forEach((block, index) => index === 0 ? null : block.forEach(node => node.value = undefined));
+    resetGraph = () => {
+        this.inputGraph.forEach((block, index) => {
+            if (block != null) {
+                block.forEach((node, pindex) => {
+                    if (node != null) this.inputGraph[index][pindex].value = null;
+                });
+            }
+        });
+        this.outputGraph.forEach((block, index) => {
+            if (block != null && index != 0) {
+                block.forEach((node, pindex) => {
+                    if (node != null) this.outputGraph[index][pindex].value = null;
+                });
+            }
+        });
+        generators.gen = {};
+        this.callStack = [];
     }
 
-    resolveGraph(blocks : IBlockRender[]) : Promise<boolean> {
+    resolveGraph(blocks : IBlockRender[], reporter : (msg : string) => void) : Promise<boolean> {
         return GetRuntime().then((lib) => {
             this.resetGraph();
-            this.resolveInputs(lib, 1, blocks);
+            this.resolveDefaults(blocks);
+            console.log(this.inputGraph);
+            console.log(this.outputGraph);
+            this.resolveInputs(lib, 1, blocks, reporter);
             return Promise.resolve(true);    
         }, (e) => {
             console.log(e);
@@ -241,35 +261,82 @@ class WorkSpaceGraph {
         });
     }
 
-    resolveInputs(lib : IModule, key : number, blocks : IBlockRender[]) {
+    resolveDefaults = (blocks : IBlockRender[]) => {
+        this.inputGraph.forEach((block, index) => {
+            if (block == null) return;
+            block.forEach((port, pindex) => {
+                if (port == null) return;
+                if (blocks[index].construct.format.inputs[pindex].default !== undefined) {
+                    this.inputGraph[index][pindex].value = blocks[index].construct.format.inputs[pindex].default;
+                }                
+            });
+        });
+        this.outputGraph.forEach((block, index) => {
+            if (block == null) return;
+            block.forEach((port, pindex) => {
+                if (port == null) return;
+                if (blocks[index].construct.format.outputs[pindex].default !== undefined) {
+                    console.log(blocks[index].construct.format.outputs[pindex].default);
+                    this.outputGraph[index][pindex].value = blocks[index].construct.format.outputs[pindex].default;
+                }                
+            });
+        });
+    }
+
+    resolveInputs = (lib : IModule, key : number, blocks : IBlockRender[], reporter: (msg : string) => void) => {
         // Resolve each input
+        this.callStack.push(key);
+        console.log(blocks[key].construct.blockName);
+        console.log("Inputs: " + this.inputGraph[key].map(v => v.value));
         this.inputGraph[key].forEach((input: IWorkSpaceGraphNode, index: number) => {
-            if (input.value == null) {
+            if (input.value === null) {
                 // if the connected output is null, resolve that block's outputs
-                if (this.outputGraph[input.block][input.port].value == null) {
-                    this.resolveOutputs(lib, input.block, blocks);
+                while (this.outputGraph[input.block][input.port].value == null) {
+                    if (this.callStack.indexOf(input.block) == -1 || (blocks[key].construct.format.inputs[index].required === undefined || blocks[key].construct.format.inputs[index].required === true)) {
+                        this.resolveOutputs(lib, input.block, blocks, reporter);
+                    }
+                    else {
+                        break;
+                    }
                 }
                 // Assign connected output to the input
                 input.value = this.outputGraph[input.block][input.port].value;
+                if (input.block != 0)
+                    this.outputGraph[input.block][input.port].value = null;
             }
         });
+        this.callStack.pop();
     }
     
-    resolveOutputs(lib: IModule, key : number, blocks : IBlockRender[]) {
+    resolveOutputs = (lib: IModule, key : number, blocks : IBlockRender[], reporter: (msg : string) => void) => {
         // Resolve the block's inputs
-        this.resolveInputs(lib, key, blocks);
-        let outputs : any[];
+        this.resolveInputs(lib, key, blocks, reporter);
+        let outputs : any[], inputs : any[];
+        console.log(blocks[key].construct.blockName);
+        console.log("Inputs before call: " + this.inputGraph[key].map(v => v.value));
         if (blocks[key].construct.packageName == "Constants") {
             let val : string | number = (blocks[key].ref.firstElementChild as HTMLInputElement).value;
             outputs = blocks[key].construct.resolver(lib, [ val ]);
         }
+        else if (blocks[key].construct.blockName == "Eavesdropper") {
+            outputs = this.inputGraph[key].map((n : IWorkSpaceGraphNode) => n.value);
+            reporter("Eavesdropper observed a value of: " + outputs[0]);
+        }
         else {
             // Use resolver function to map inputs to outputs
-            outputs = blocks[key].construct.resolver(lib, this.inputGraph[key].map((n : IWorkSpaceGraphNode) => n.value));
+            inputs = this.inputGraph[key].map((n : IWorkSpaceGraphNode) => n.value);
+            outputs = blocks[key].construct.resolver(lib, inputs);
         }
+        console.log(blocks[key].construct.blockName);
+        console.log("Output" + outputs);
         outputs.forEach((o : any, index: number) => {
             this.outputGraph[key][index].value = o as (number | string | Uint8Array);
         });
+        if (inputs != null) {
+            inputs.forEach((i : any, index: number) => {
+                this.inputGraph[key][index].value = null;
+            });
+        }
     }
 }
 
@@ -479,11 +546,25 @@ class WorkSpace extends React.Component<{}, IState> {
         })
     }
 
-    runProject = () : Promise<boolean> => {
+    runProject = (reporter : (msg : string) => void) : Promise<boolean> => {
         if (this.verifyProject().length != 0) {
             return Promise.resolve(false);
         }
-        return this.state.graph.resolveGraph(this.state.blockElements);
+        return this.state.graph.resolveGraph(this.state.blockElements, reporter);
+    }
+
+    resolveOutputType(blockNum: number, outputNumber: number) : string {
+        let type = this.state.blockElements[blockNum].construct.format.outputs[outputNumber].format;
+        // If it inherits its type, check the inheritted type
+        if (isNaN(parseInt(type)) == false) {
+            let t = parseInt(type)
+            type = this.state.blockElements[blockNum].construct.format.inputs[parseInt(type)].format;
+            if (type === "inherit") {
+                let p : IWorkSpaceGraphNode = this.state.graph.inputGraph[blockNum][t];
+                if (p != null) type = this.resolveOutputType(p.block, p.port);
+            }
+        }
+        return type;
     }
 
     verifyProject = () : string[] => {
@@ -494,23 +575,48 @@ class WorkSpace extends React.Component<{}, IState> {
             errors.push("\u00a0\u00a0> Alice has not been given a message, use command 'alice <message>'")
         }
         // Check 2: Find unassigned inputs
-        let missingInputs : [number, number][] = this.state.graph.getUnconnectedInputs();
+        let missingInputs : [number, number[]][] = this.state.graph.getUnconnectedInputs();
         if (missingInputs.length > 0) {
-            missingInputs.forEach((value: [number, number]) => {
-                if (value[1] > 0) {
+            missingInputs.forEach((value: [number, number[]]) => {
+                if (value[1].length > 0) {
                     let blockName : string = this.state.blockElements[value[0]].construct.blockName;
-                    errors.push("\u00a0\u00a0> Block " + blockName + " has " + value[1] + " unconnected inputs, make sure that all inputs are connected with a wire");
+                    errors.push("\u00a0\u00a0> Block " + blockName + " has " + value[1].length + " unconnected inputs, make sure that all inputs are connected with a wire");
+                    value[1].forEach(i => {
+                        this.state.blocks[value[0]].inputs[i].ref.className += " error";
+                        this.state.blocks[value[0]].inputs[i].ref.parentElement.onclick = () => {
+                            this.state.blocks[value[0]].inputs[i].ref.className = this.state.blocks[value[0]].inputs[i].ref.className.replace("error", "");
+                            this.state.blocks[value[0]].inputs[i].ref.parentElement.onclick = () => {};
+                        }
+                    })
                 }
             })
         }
         // Check 3: Find faulty inputs
         this.state.blockElements.forEach((el) => {
+            if (el == null) return;
             if (el.ref.firstElementChild != null) {
                 if (!(el.ref.firstElementChild as HTMLInputElement).checkValidity()) {
                     errors.push("\u00a0\u00a0> Block " + el.construct.blockName + " has an invalid input value")
                 }
             }
         })
+        // Check 4: Find incorrect types (essentially, byte array inputs accept all types, numbers only accept numbers)
+        this.state.graph.inputGraph.forEach((node, nodeIndex) => {
+            if (node == null) return;
+            node.forEach((input, index) => {
+                if (input == GraphState.UNCONNECTED) return;
+                let inputType : string = this.state.blockElements[nodeIndex].construct.format.inputs[index].format;
+                // an input that inherits its type is always correct
+                if (inputType == "inherit") {
+                    return;
+                }
+                let outputType : string = this.resolveOutputType(input.block, input.port);
+                if (inputType == "number" && outputType != "number") {
+                    this.state.blocks[input.block].outputs[input.port].ref.className += " error";
+                    errors.push("\u00a0\u00a0> Block " + this.state.blockElements[nodeIndex].construct.blockName + " has an input of type " + inputType + " but is connected to an output of type " + outputType);
+                }
+            })
+        });
 
         if (errors.length > 0) {
             errors.unshift(errors.length + " errors found: ");
@@ -541,12 +647,20 @@ class WorkSpace extends React.Component<{}, IState> {
             }
             else {
                 let message = tokenized.join(" ");
-                this.state.graph.outputGraph[0][0].value = message;
+                if (isNaN(parseInt(message))) {
+                    this.state.graph.outputGraph[0][0].value = message;
+                    this.state.blockElements[0].construct.format.outputs[0].format = "string";
+                }
+                else {
+                    this.state.graph.outputGraph[0][0].value = parseInt(message);
+                    this.state.blockElements[0].construct.format.outputs[0].format = "number";
+                }
+                
                 return [ "Alice will send the message: " + message ]
             }
         }
         if (keyword == "run") {
-            this.runProject().then((status) => {
+            this.runProject(furtherInfoHook).then((status) => {
                 if (status) furtherInfoHook("Project succeeded, check output value with command 'bob'.");
                 else furtherInfoHook("Project failed, verify it with command 'verify'.");
             })
@@ -580,7 +694,7 @@ class WorkSpace extends React.Component<{}, IState> {
                     if ((bobTranslated as string).length != bob.length) {
                         bobTranslated = ""
                         bob.forEach(byte => {
-                            bobTranslated += "0" + (byte.toString(16)).slice(-2);
+                            bobTranslated += ("0" + (byte.toString(16))).slice(-2);
                         });
                         bobTranslated = "0x" + bobTranslated;
                     }
@@ -635,7 +749,8 @@ class WorkSpace extends React.Component<{}, IState> {
                             return (
                                 <ContextMenuTrigger
                                     key={ index }
-                                    id={ "block-" + index }>
+                                    id={ "block-" + index }
+                                    holdToDisplay={-1}>
                                     <$value.construct.constructor
                                         id={ index }
                                         position={ $value.initialPosition }

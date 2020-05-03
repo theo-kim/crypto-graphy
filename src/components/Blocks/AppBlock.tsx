@@ -29,18 +29,19 @@ interface IIconBlockProps {
     template: IBlockTemplate;
 }
 
-let slot = function(side : string, index: number) : BlockOutput {
+let slot = function(side : string, index: number, label: string, type: string) : BlockOutput {
     return {
         side : side,
         index : index,
         connected: false,
+        label: label,
     }
 }
 
 function BlockTemplateFactory(format : any) : IBlockTemplate {
     return {
-        inputs: format.inputs.map((input : any) => slot(input.side, input.position)),
-        outputs: format.outputs.map((output : any) => slot(output.side, output.position)),
+        inputs: format.inputs.map((input : any) => slot(input.side, input.position, input.label || "Input", input.format)),
+        outputs: format.outputs.map((output : any) => slot(output.side, output.position, output.label || "Output", output.format)),
         size: [ format.size[0], format.size[1] ],
     }
 }

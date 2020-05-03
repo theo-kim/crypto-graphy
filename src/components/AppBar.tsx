@@ -9,7 +9,8 @@ export default class AppBar extends React.Component {
         return (
             <div id="app-bar">
                 {appInfo.appName}
-                <ControlMenu />
+                
             </div>);
+            // <ControlMenu />
     };
 };

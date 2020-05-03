@@ -1,8 +1,8 @@
 import * as React from 'react';
 import update from 'immutability-helper';
-
 import Draggable from 'react-draggable';
 import { DraggableEvent, DraggableData } from 'react-draggable';
+import ReactTooltip from "react-tooltip";
 
 import Wire from '../Wire/Wire';
 
@@ -12,6 +12,8 @@ interface IInputs {
     side: string;
     index: number;
     connected?: boolean;
+    label: string;
+    ref?: HTMLDivElement;
 }
 
 interface IOutputs extends IInputs {}
@@ -291,7 +293,10 @@ export default class Block extends React.Component<IProps, IState> {
                                         style={{
                                             left: pos[0] - 12.5,
                                             top: pos[1]
-                                        }} />
+                                        }}
+                                        data-tip={this.props.inputs[index].label}
+                                        data-for={"block-tip-" + this.props.id}
+                                        ref={(ref) => this.props.inputs[index].ref = ref}/>
                                 )    
                             }
                             if (this.props.inputs[index].side == "left") { // Left
@@ -301,7 +306,10 @@ export default class Block extends React.Component<IProps, IState> {
                                         style={{
                                             left: pos[0],
                                             top: pos[1] - 12.5
-                                        }} />
+                                        }}
+                                        data-tip={this.props.inputs[index].label}
+                                        data-for={"block-tip-" + this.props.id}
+                                        ref={(ref) => this.props.inputs[index].ref = ref}/>
                                 )    
                             }
                             if (this.props.inputs[index].side == "bottom") { // Bottom
@@ -311,7 +319,10 @@ export default class Block extends React.Component<IProps, IState> {
                                         style={{
                                             left: pos[0] - 12.5,
                                             bottom: 0
-                                        }} />
+                                        }}
+                                        data-tip={this.props.inputs[index].label}
+                                        data-for={"block-tip-" + this.props.id}
+                                        ref={(ref) => this.props.inputs[index].ref = ref}/>
                                 )    
                             }
                             if (this.props.inputs[index].side == "right") { // Right
@@ -321,7 +332,10 @@ export default class Block extends React.Component<IProps, IState> {
                                         style={{
                                             right: 0,
                                             top: pos[1] - 12.5
-                                        }} />
+                                        }}
+                                        data-tip={this.props.inputs[index].label}
+                                        data-for={"block-tip-" + this.props.id}
+                                        ref={(ref) => this.props.inputs[index].ref = ref}/>
                                 )    
                             }
                         })
@@ -336,7 +350,10 @@ export default class Block extends React.Component<IProps, IState> {
                                         onDrag={(e, data) => { this.outputDragHandler(index, data) }}
                                         position={ { x : this.state.outputPosEnd[index][0] - 12.5, y: this.state.outputPosEnd[index][1] - 12.5} }
                                         onStop={(e, data) => { this.outputDragReleaseHandler(index, data) }}>
-                                        <div className="output"></div>
+                                        <div className="output"
+                                            data-tip={this.props.outputs[index].label}
+                                            data-for={"block-tip-" + this.props.id}
+                                            ref={(ref) => this.props.outputs[index].ref = ref}></div>
                                     </Draggable>
                             );
                         })
@@ -352,6 +369,7 @@ export default class Block extends React.Component<IProps, IState> {
                             );
                         })
                     }
+                    <ReactTooltip disable={this.props.dead} id={"block-tip-" + this.props.id} multiline={false} effect="solid"/>
                 </div>
             </Draggable>
         );

@@ -63,8 +63,8 @@ function UDiv (start : [number, number], end : [number, number], height: number,
         position: "absolute",
         width: w,
         height: h,
-        left: Math.min(start[0], end[0]),
-        top: Math.min(start[1], end[1]),
+        left: orientation == Direction.Left ? Math.min(start[0], end[0] - w) : Math.min(start[0], end[0]),
+        top: orientation == Direction.Up ? Math.min(start[1], end[1] - h) : Math.min(start[1], end[1]),
         borderBottomStyle: downSide ? "solid" : "none",
         borderLeftStyle: leftSide ? "solid" : "none",
         borderTopStyle: upSide ? "solid" : "none",
@@ -117,8 +117,8 @@ export default class Wire extends React.Component<IProps, IState> {
                 style = LDiv(this.props.from, this.props.to, dir);
             }
             else {
-                style = UDiv(this.props.from, [this.props.to[0], this.props.from[1]], 50, dir);
-                subWireStyle = LDiv([this.props.to[0], this.props.from[1]], this.props.to, Direction.Up);
+                style = UDiv(this.props.from, [this.props.to[0] - 3, this.props.from[1]], 50, dir);
+                subWireStyle = LDiv([Math.max(this.props.to[0] - this.props.from[0] - 3, -3), 0], [ Math.max(this.props.to[0] - this.props.from[0] - 3, -3), this.props.to[1] - this.props.from[1] ], Direction.Up);
             }
         }
         else if (dir == Direction.Up) {
@@ -126,8 +126,8 @@ export default class Wire extends React.Component<IProps, IState> {
                 style = LDiv(this.props.from, this.props.to, dir);
             }
             else {
-                style = UDiv(this.props.from, [this.props.to[0], this.props.from[1]], 50, dir);
-                subWireStyle = LDiv([this.props.to[0], this.props.from[1]], this.props.to, Direction.Down);
+                style = UDiv(this.props.from, [this.props.to[0] - 3, this.props.from[1]], 50, dir);
+                subWireStyle = LDiv([Math.max(this.props.to[0] - this.props.from[0] - 3, -3), 50], [Math.max(this.props.to[0] - this.props.from[0] - 3, -3), this.props.to[1] - this.props.from[1] + 50], Direction.Down);
             }
         }
         else if (dir == Direction.Left) {
@@ -136,7 +136,7 @@ export default class Wire extends React.Component<IProps, IState> {
             }
             else {
                 style = UDiv(this.props.from, [this.props.from[0], this.props.to[1]], 50, dir);
-                
+                subWireStyle = LDiv([50, Math.max(-3, this.props.to[1] - this.props.from[1])], [this.props.to[0] + this.props.from[0] + 50, Math.max(-3, this.props.to[1] - this.props.from[1])], Direction.Left);
             }
         }
         else if (dir == Direction.Right) {

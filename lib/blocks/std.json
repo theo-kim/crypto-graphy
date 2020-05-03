@@ -1,7 +1,7 @@
 {
     "Comparison Operators" : { 
         "Equality" : {
-            "operation" : "std.EQ(0, 1, util.len(0))",
+            "operation" : "util.assign(std.EQ(0, 1, util.len(0)), 2)",
             "description": "Performs a check for equality on two integers, returns a 1 or 0",
             "label": "=",
             "format": {
@@ -10,25 +10,28 @@
                     {
                         "side": "top",
                         "position": 1,
-                        "format": "bytearr"
+                        "format": "bytearr",
+                        "label": "Value 1"
                     },
                     {
                         "side": "bottom",
                         "position": 1,
-                        "format": "bytearr"
+                        "format": "bytearr",
+                        "label": "Value 2"
                     }
                 ],
                 "outputs" : [
                     {
                         "side": "right",
                         "position": 1,
-                        "format": "bytearr"
+                        "format": "number",
+                        "label": "1 or 0"
                     }
                 ]
             }
         },
         "Inequality" : {
-            "operation" : "std.NEQ(0, 1, util.len(0))",
+            "operation" : "util.assign(std.NEQ(0, 1, util.len(0)), 2)",
             "description": "Performs a check for inequality on two integers, returns a 1 or 0",
             "label": "≠",
             "format": {
@@ -37,19 +40,22 @@
                     {
                         "side": "top",
                         "position": 1,
-                        "format": "bytearr"
+                        "format": "bytearr",
+                        "label": "Value 1"
                     },
                     {
                         "side": "bottom",
                         "position": 1,
-                        "format": "bytearr"
+                        "format": "bytearr",
+                        "label": "Value 2"
                     }
                 ],
                 "outputs" : [
                     {
                         "side": "right",
                         "position": 1,
-                        "format": "bytearr"
+                        "format": "number",
+                        "label": "1 or 0"
                     }
                 ]
             }
@@ -158,12 +164,93 @@
                     }
                 ]
             }
+        },
+        "LSHIFT" : {
+            "operation" : "std.LSHIFT(0, 1, util.len(0), 2)",
+            "description": "Performs a bitwise left shift (non-circular).",
+            "label": "<<",
+            "format": {
+                "size": [ 50, 50 ],
+                "inputs": [
+                    {
+                        "side": "left",
+                        "position": 1,
+                        "format": "bytearr"
+                    },
+                    {
+                        "side": "top",
+                        "position": 1,
+                        "format": "number"
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "bytearr"
+                    }
+                ]
+            }
+        },
+        "RSHIFT" : {
+            "operation" : "std.RSHIFT(0, 1, util.len(0), 2)",
+            "description": "Performs a bitwise right shift (non-circular).",
+            "label": ">>",
+            "format": {
+                "size": [ 50, 50 ],
+                "inputs": [
+                    {
+                        "side": "left",
+                        "position": 1,
+                        "format": "bytearr"
+                    },
+                    {
+                        "side": "top",
+                        "position": 1,
+                        "format": "number"
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "bytearr"
+                    }
+                ]
+            }
+        },
+        "Bitwise ADD" : {
+            "operation" : "std.ADD(0, 1, util.len(0), 2)",
+            "description": "Performs an addition on two byte arrays, dropping any overflow bit.",
+            "label": "b+",
+            "format": {
+                "size": [50, 50],
+                "inputs": [
+                    {
+                        "side": "top",
+                        "position": 1,
+                        "format": "bytearr"
+                    },
+                    {
+                        "side": "bottom",
+                        "position": 1,
+                        "format": "bytearr"
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "bytearr"
+                    }
+                ]
+            }
         }
     },
     "Arithmetic Operators" : {
-        "ADD" : {
-            "operation" : "std.ADD(0, 1)",
-            "description": "Performs an addition on two integers, dropping any overflow bit.",
+        "Addition" : {
+            "operation" : "util.assign(util.ADD(0, 1), 2)",
+            "description": "Performs an addition between two numbers.",
             "label": "+",
             "format": {
                 "size": [50, 50],
@@ -171,26 +258,26 @@
                     {
                         "side": "top",
                         "position": 1,
-                        "format": "int"
+                        "format": "number"
                     },
                     {
                         "side": "bottom",
                         "position": 1,
-                        "format": "int"
+                        "format": "number"
                     }
                 ],
                 "outputs" : [
                     {
                         "side": "right",
                         "position": 1,
-                        "format": "int"
+                        "format": "number"
                     }
                 ]
             }
         },
-        "SUB" : {
-            "operation" : "std.SUB(0, 1)",
-            "description": "Performs a subtraction on two integers, dropping any overflow bit.",
+        "Subtraction" : {
+            "operation" : "util.assign(util.SUB(0, 1), 2)",
+            "description": "Performs a subtraction between two numbers.",
             "label": "-",
             "format": {
                 "size": [50, 50],
@@ -198,19 +285,144 @@
                     {
                         "side": "top",
                         "position": 1,
-                        "format": "int"
+                        "format": "number"
                     },
                     {
                         "side": "bottom",
                         "position": 1,
-                        "format": "int"
+                        "format": "number"
                     }
                 ],
                 "outputs" : [
                     {
                         "side": "right",
                         "position": 1,
-                        "format": "int"
+                        "format": "number"
+                    }
+                ]
+            }
+        },
+        "Division" : {
+            "operation" : "util.assign(util.DIV(0, 1), 2)",
+            "description": "Performs an integer division between two numbers (i.e. remainders are dropped)",
+            "label": "÷",
+            "format": {
+                "size": [50, 50],
+                "inputs": [
+                    {
+                        "side": "top",
+                        "position": 1,
+                        "format": "number"
+                    },
+                    {
+                        "side": "bottom",
+                        "position": 1,
+                        "format": "number"
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "number"
+                    }
+                ]
+            }
+        },
+        "Multiplication" : {
+            "operation" : "util.assign(util.MUL(0, 1), 2)",
+            "description": "Performs a multiplication between two numbers",
+            "label": "×",
+            "format": {
+                "size": [50, 50],
+                "inputs": [
+                    {
+                        "side": "top",
+                        "position": 1,
+                        "format": "number"
+                    },
+                    {
+                        "side": "bottom",
+                        "position": 1,
+                        "format": "number"
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "number"
+                    }
+                ]
+            }
+        },
+        "Modulo" : {
+            "operation" : "util.assign(util.MOD(0, 1), 2)",
+            "description": "Performs a modulo between two numbers (i.e. the remainder after an integer division between both inputs)",
+            "label": "%",
+            "format": {
+                "size": [50, 50],
+                "inputs": [
+                    {
+                        "side": "top",
+                        "position": 1,
+                        "format": "number"
+                    },
+                    {
+                        "side": "bottom",
+                        "position": 1,
+                        "format": "number"
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "number"
+                    }
+                ]
+            }
+        }
+    },
+    "Factoring" : {
+        "Extended Euclidian GCD" : {
+            "operation" : "util.egcd(0, 1, 2, 3, 4)",
+            "description": "Hashes a variable length input into a 128-bit hash value.",
+            "label": "eGCD",
+            "format": {
+                "size": [100, 50],
+                "inputs": [
+                    {
+                        "side": "top",
+                        "position": 1,
+                        "format": "number",
+                        "label": "A"
+                    },
+                    {
+                        "side": "top",
+                        "position": 3,
+                        "format": "number",
+                        "label": "B"
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "number",
+                        "label": "GCD"
+                    },
+                    {
+                        "side": "bottom",
+                        "position": 1,
+                        "format": "number",
+                        "label": "x"
+                    },
+                    {
+                        "side": "bottom",
+                        "position": 3,
+                        "format": "number",
+                        "label": "y"
                     }
                 ]
             }
@@ -289,8 +501,8 @@
     },
     "Pseudo-Randomness" : {
         "Psuedo-Random Generator" : {
-            "operation" : "std.loop(crypto.PRG(0), 1)",
-            "description": "Uses a random seed to generate a deterministic sequence of pseudo-random numbers",
+            "operation" : "util.assign(util.PRG(0), 1)",
+            "description": "Uses a random seed to generate a pseudo-random byte (8-bits). Not deterministic, running multiple times will yield different values",
             "label": "PRG",
             "format": {
                 "size": [100, 50],
@@ -298,26 +510,23 @@
                     {
                         "side": "left",
                         "position": 1,
-                        "format": "int"
-                    },
-                    {
-                        "side": "top",
-                        "position": 2,
-                        "format": "int"
+                        "format": "int",
+                        "label": "seed"
                     }
                 ],
                 "outputs" : [
                     {
                         "side": "right",
                         "position": 1,
-                        "format": "int"
+                        "format": "int",
+                        "label": "Pseudo-random Value"
                     }
                 ]
             }
         },
         "Pseudo-Random Function" : {
-            "operation" : "crypto.PRF(0, 1)",
-            "description": "Given a random key and an initialization value, produce a pseudo-random value of size X",
+            "operation" : "util.assign(util.PRF(0, 1), 2)",
+            "description": "Given a random key and a seed, produce a pseudo-random byte deterministically",
             "label": "PRF",
             "format": {
                 "size": [100, 50],
@@ -325,134 +534,252 @@
                     {
                         "side": "left",
                         "position": 1,
-                        "format": "int"
+                        "format": "bytearr",
+                        "label": "key"
                     },
                     {
                         "side": "top",
                         "position": 2,
-                        "format": "int"
+                        "format": "int",
+                        "label": "seed"
                     }
                 ],
                 "outputs" : [
                     {
                         "side": "right",
                         "position": 1,
-                        "format": "int"
-                    }
-                ]
-            }
-        },
-        "Pseudo-Random Permutation" : {
-            "operation" : "crypto.PRP(0, 1)",
-            "description": "Given a random key and an initialization value, produce a pseudo-random value of size X which is 1-to-1 mapped with the initialization value",
-            "label": "PRP",
-            "format": {
-                "size": [100, 50],
-                "inputs": [
-                    {
-                        "side": "left",
-                        "position": 1,
-                        "format": "int"
-                    },
-                    {
-                        "side": "top",
-                        "position": 2,
-                        "format": "int"
-                    }
-                ],
-                "outputs" : [
-                    {
-                        "side": "right",
-                        "position": 1,
-                        "format": "int"
+                        "format": "int",
+                        "label": "value"
                     }
                 ]
             }
         }
     },
     "Symmetric Encryption" : {
-        "AES" : {
-            "operation" : "encrypt.AES(0, 1)",
-            "description": "Given a random key and an initialization value, produce a pseudo-random value of size X which is 1-to-1 mapped with the initialization value",
-            "label": "AES",
-            "format": {
-                "size": [100, 100],
-                "inputs": [
-                    {
-                        "side": "top",
-                        "position": 2,
-                        "format": "int"
-                    },
-                    {
-                        "side": "left",
-                        "position": 1,
-                        "format": "int"
-                    },
-                    {
-                        "side": "left",
-                        "position": 3,
-                        "format": "int"
-                    }
-                ],
-                "outputs" : [
-                    {
-                        "side": "right",
-                        "position": 2,
-                        "format": "int"
-                    }
-                ]
-            }
-        },
-        "DES" : {
-            "operation" : "encrypt.DES(0, 1)",
-            "description": "Given a random key and an initialization value, produce a pseudo-random value of size X which is 1-to-1 mapped with the initialization value",
-            "label": "DES",
+        "AES CBC" : {
+            "operation" : "util.assign(util.aes_cbc_encrypt(0, 1, 2, 3), 4)",
+            "description": "Given a random key and an initialization vector, produce a an encrypted ciphertext for the given plaintext",
+            "label": "AES-CBC Enc",
             "format": {
                 "size": [100, 100],
                 "inputs": [
                     {
                         "side": "left",
-                        "position": 1,
-                        "format": "int"
+                        "position": 2,
+                        "format": "bytearr",
+                        "label": "Plaintext"
                     },
                     {
-                        "side": "left",
+                        "side": "bottom",
+                        "position": 1,
+                        "format": "bytearr",
+                        "label": "Key",
+                        "size": 16
+                    },
+                    {
+                        "side": "bottom",
                         "position": 3,
-                        "format": "int"
+                        "format": "bytearr",
+                        "label": "Initialization Vector",
+                        "size": 16
                     }
                 ],
                 "outputs" : [
                     {
                         "side": "right",
-                        "position": 2,
-                        "format": "int"
+                        "position": 1,
+                        "format": "bytearr",
+                        "label": "Ciphertext",
+                        "size": 256
+                    },
+                    {
+                        "side": "right",
+                        "position": 3,
+                        "format": "number",
+                        "label": "Ciphertext Length"
                     }
                 ]
             }
         },
-        "One Time Pad" : {
-            "operation" : "encrypt.OTP(0, 1)",
-            "description": "Given a random key and an initialization value, produce a pseudo-random value of size X which is 1-to-1 mapped with the initialization value",
+        "AES CTR" : {
+            "operation" : "util.assign(util.aes_ctr_encrypt(0, 1, 2), 3)",
+            "description": "Given a random key and an initialization vector, produce a an encrypted ciphertext for the given plaintext",
+            "label": "AES-CTR Enc",
+            "format": {
+                "size": [100, 100],
+                "inputs": [
+                    {
+                        "side": "left",
+                        "position": 2,
+                        "format": "bytearr",
+                        "label": "Plaintext"
+                    },
+                    {
+                        "side": "bottom",
+                        "position": 2,
+                        "format": "bytearr",
+                        "label": "Key",
+                        "size": 16
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "bytearr",
+                        "label": "Ciphertext",
+                        "size": 256
+                    },
+                    {
+                        "side": "right",
+                        "position": 3,
+                        "format": "number",
+                        "label": "Ciphertext Length"
+                    }
+                ]
+            }
+        },
+        "One Time Pad Encode" : {
+            "operation" : "encrypt.XOR(0, 1, util.len(0), 2)",
+            "description": "Given a random key, encrypt a plaintext using a uniform XOR. If the size of the key is not the same as the plaintext, zeros are filled.",
             "label": "OTP",
             "format": {
                 "size": [100, 50],
                 "inputs": [
                     {
-                        "side": "top",
-                        "position": 2,
-                        "format": "int"
+                        "side": "left",
+                        "position": 1,
+                        "format": "bytearr",
+                        "label": "Plaintext"
                     },
                     {
                         "side": "bottom",
                         "position": 2,
-                        "format": "int"
+                        "format": "bytearr",
+                        "label": "Key"
                     }
                 ],
                 "outputs" : [
                     {
                         "side": "right",
                         "position": 1,
-                        "format": "int"
+                        "format": "bytearr",
+                        "label": "Ciphertext"
+                    }
+                ]
+            }
+        }
+    },
+    "Symmetric Decryption" : {
+        "AES CBC" : {
+            "operation" : "util.assign(util.aes_cbc_decrypt(0, 1, 2, 3), 4)",
+            "description": "Given a key, initialization value, and ciphertext decode a plaintext message",
+            "label": "AES-CBC Dec",
+            "format": {
+                "size": [100, 100],
+                "inputs": [
+                    {
+                        "side": "left",
+                        "position": 2,
+                        "format": "bytearr",
+                        "label": "CipherText"
+                    },
+                    {
+                        "side": "bottom",
+                        "position": 1,
+                        "format": "bytearr",
+                        "label": "Key",
+                        "size": 16
+                    },
+                    {
+                        "side": "bottom",
+                        "position": 3,
+                        "format": "bytearr",
+                        "label": "Initialization Vector",
+                        "size": 16
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "bytearr",
+                        "label": "Plaintext",
+                        "size": 256
+                    },
+                    {
+                        "side": "right",
+                        "position": 3,
+                        "format": "number",
+                        "label": "Plaintext Length"
+                    }
+                ]
+            }
+        },
+        "AES CTR" : {
+            "operation" : "util.assign(util.aes_ctr_decrypt(0, 1, 2), 3)",
+            "description": "Given a key and a ciphertext decode a plaintext message",
+            "label": "AES-CTR Dec",
+            "format": {
+                "size": [100, 100],
+                "inputs": [
+                    {
+                        "side": "left",
+                        "position": 2,
+                        "format": "bytearr",
+                        "label": "Ciphertext"
+                    },
+                    {
+                        "side": "bottom",
+                        "position": 2,
+                        "format": "bytearr",
+                        "label": "Key",
+                        "size": 16
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "bytearr",
+                        "label": "Plaintext",
+                        "size": 256
+                    },
+                    {
+                        "side": "right",
+                        "position": 3,
+                        "format": "number",
+                        "label": "Plaintext Length"
+                    }
+                ]
+            }
+        },
+        "One Time Pad Decode" : {
+            "operation" : "encrypt.XOR(0, 1, util.len(0), 2)",
+            "description": "Given a random key, encrypt a plaintext using a uniform XOR. If the size of the key is not the same as the plaintext, zeros are filled.",
+            "label": "OTP",
+            "format": {
+                "size": [100, 50],
+                "inputs": [
+                    {
+                        "side": "left",
+                        "position": 1,
+                        "format": "bytearr",
+                        "label": "Ciphertext"
+                    },
+                    {
+                        "side": "bottom",
+                        "position": 2,
+                        "format": "bytearr",
+                        "label": "Key"
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "bytearr",
+                        "label": "Plaintext"
                     }
                 ]
             }

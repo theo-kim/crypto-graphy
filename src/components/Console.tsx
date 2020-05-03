@@ -12,12 +12,24 @@ interface IState {
     lines: string[];
 }
 
+class ConsoleEvents {
+    listener : () => void = undefined;
+    addListener(callback : () => void) {
+        this.listener = callback;
+    }
+
+}
+
 class Console extends React.Component<IProps, IState> {
     userInput : HTMLDivElement;
+    inputBuffer : string[];
+    waitingForStateUpdate : boolean;
     
     constructor (props : IProps) {
         super(props);
         this.state = { lines : [] }
+        this.inputBuffer = [];
+        this.waitingForStateUpdate = false;
     }
 
     scrollToBottom = () => {
@@ -26,14 +38,30 @@ class Console extends React.Component<IProps, IState> {
 
     componentDidUpdate() {
         this.scrollToBottom();
+        if (this.inputBuffer.length > 0) {
+            this.setState(() => {
+                let msgs : string[] = this.inputBuffer;
+                this.inputBuffer = [];
+                return {
+                    lines: update(this.state.lines, { $push: msgs })
+                }
+            });    
+        }
+        else {
+            this.waitingForStateUpdate = false;
+        }
     }
 
     hook = (msg: string) => {
-        this.setState(() => {
-            return {
-                lines: update(this.state.lines, { $push: [ msg ] })
-            }
-        });
+        if (this.waitingForStateUpdate) this.inputBuffer.push(msg);
+        else {
+            this.waitingForStateUpdate = true;
+            this.setState(() => {
+                return {
+                    lines: update(this.state.lines, { $push: [ msg ] })
+                }
+            }); 
+        }
     }
 
     handleSpecialKeys = (e : React.KeyboardEvent) => {
@@ -41,6 +69,7 @@ class Console extends React.Component<IProps, IState> {
             let command : string = (e.target as HTMLInputElement).value;
             let line : string = appInfo.configurable.ps1 + " " + command;
             (e.target as HTMLInputElement).value = "";
+            this.waitingForStateUpdate = true;
             this.setState(() => {
                 let response : string[] = this.props.onCommand(command, this.hook);
                 response.unshift(line);
