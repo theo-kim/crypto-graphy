@@ -3,12 +3,14 @@ import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 
 import Block, { IPropsCallback as BlockPropsCallback, IPropsReal as IBlockProps, IOnWireMoveEvent } from './Blocks/Block'
 import { ILoaderFunction, BlockLibrary } from './Blocks/BlockLoad';
-import { GetRuntime, IModule, generators } from './Blocks/LibLoad';
+import { GetRuntime, IModule } from './Blocks/LibLoad';
+import { generators } from '../runtime/random';
 import ToolBar from './ToolBar';
 import Console from './Console';
 
 import appInfo from '../appInfo.json';
 import { getJoinSemigroup } from 'fp-ts/lib/Semigroup';
+import { fromCompare } from 'fp-ts/lib/Ord';
 
 // Interface definitions
 interface IInputs {
@@ -568,7 +570,7 @@ class WorkSpace extends React.Component<{}, IState> {
         // Ensure that there are no blocks with unassigned inputs
         // Check 1: Make sure that Alice's value was set
         if (this.state.graph.outputGraph[0][0].value == null) {
-            errors.push("\u00a0\u00a0> Alice has not been given a message, use command 'alice <message>'")
+            errors.push("[ERROR] Alice has not been given a message, use command 'alice <message>'")
         }
         // Check 2: Find unassigned inputs
         let missingInputs : [number, number[]][] = this.state.graph.getUnconnectedInputs();
@@ -576,12 +578,12 @@ class WorkSpace extends React.Component<{}, IState> {
             missingInputs.forEach((value: [number, number[]]) => {
                 if (value[1].length > 0) {
                     let blockName : string = this.state.blockElements[value[0]].construct.blockName;
-                    errors.push("\u00a0\u00a0> Block " + blockName + " has " + value[1].length + " unconnected inputs, make sure that all inputs are connected with a wire");
+                    errors.push("[ERROR] Block " + blockName + " has " + value[1].length + " unconnected inputs, make sure that all inputs are connected with a wire");
                     value[1].forEach(i => {
                         this.state.blocks[value[0]].inputs[i].ref.className += " error";
-                        this.state.blocks[value[0]].inputs[i].ref.parentElement.onclick = () => {
+                        this.state.blocks[value[0]].inputs[i].ref.parentElement.onmouseleave = () => {
                             this.state.blocks[value[0]].inputs[i].ref.className = this.state.blocks[value[0]].inputs[i].ref.className.replace("error", "");
-                            this.state.blocks[value[0]].inputs[i].ref.parentElement.onclick = () => {};
+                            this.state.blocks[value[0]].inputs[i].ref.parentElement.onmouseleave = () => {};
                         }
                     })
                 }
@@ -592,7 +594,7 @@ class WorkSpace extends React.Component<{}, IState> {
             if (el == null) return;
             if (el.ref.firstElementChild != null) {
                 if (!(el.ref.firstElementChild as HTMLInputElement).checkValidity()) {
-                    errors.push("\u00a0\u00a0> Block " + el.construct.blockName + " has an invalid input value")
+                    errors.push("[ERROR] Block " + el.construct.blockName + " has an invalid input value")
                 }
             }
         })
@@ -609,11 +611,11 @@ class WorkSpace extends React.Component<{}, IState> {
                 let outputType : string = this.resolveOutputType(input.block, input.port);
                 if (inputType == "number" && outputType != "number") {
                     this.state.blocks[input.block].outputs[input.port].ref.className += " error";
-                    errors.push("\u00a0\u00a0> Block " + this.state.blockElements[nodeIndex].construct.blockName + " has an input of type " + inputType + " but is connected to an output of type " + outputType);
+                    errors.push("[ERROR] Block " + this.state.blockElements[nodeIndex].construct.blockName + " has an input of type " + inputType + " but is connected to an output of type " + outputType);
                 }
                 else if (inputType.includes("enum") && inputType != outputType) {
                     this.state.blocks[input.block].outputs[input.port].ref.className += " error";
-                    errors.push("\u00a0\u00a0> Block " + this.state.blockElements[nodeIndex].construct.blockName + " has an input of type " + inputType + " but is connected to an output of type " + outputType);
+                    errors.push("[ERROR] Block " + this.state.blockElements[nodeIndex].construct.blockName + " has an input of type " + inputType + " but is connected to an output of type " + outputType);
                 }
             })
         });

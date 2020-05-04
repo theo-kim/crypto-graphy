@@ -52,6 +52,14 @@ class Console extends React.Component<IProps, IState> {
         }
     }
 
+    prettyPrint(line : string, key : number) : JSX.Element {
+        let isWarning = line.substr(0, "[WARNING]".length) === "[WARNING]";
+        let isError = line.substr(0, "[ERROR]".length) === "[ERROR]";
+        return (<div className={"console-line" + (isError ? " error" : "") + (isWarning ? " warning" : "")} key={key}>
+            { line }
+        </div>);
+    }
+
     hook = (msg: string) => {
         if (this.waitingForStateUpdate) this.inputBuffer.push(msg);
         else {
@@ -91,9 +99,7 @@ class Console extends React.Component<IProps, IState> {
                         {
                             this.state.lines.map((line : string, index: number) => {
                                 return ( 
-                                    <div className="console-line" key={index}>
-                                        { line }
-                                    </div>
+                                    this.prettyPrint(line, index)
                                 );
                             })
                         }

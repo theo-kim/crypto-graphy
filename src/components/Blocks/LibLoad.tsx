@@ -1,12 +1,11 @@
 import * as t from 'io-ts';
-import gen, { RandomSeed } from 'random-seed';
 import aesjs, { ModeOfOperation } from 'aes-js';
 
 import Module from '../../../lib/build/lib';
 import { extend } from 'immutability-helper';
+import { RAND_byte, generators, PRGn, PRF, PRP, } from '../../runtime/random';
 
 // Generator states
-let generators : { gen: {[seed : number]: RandomSeed} } = { gen : {} };
 
 // Library
 type IResolver = (lib : IModule, args : (number | string | Uint8Array)[], reporter: (msg: string) => void) => (number | string | Uint8Array)[]
@@ -176,6 +175,16 @@ function CalculateRuntimeSize(inputs : ILibInput[], outputs : ILibInput[]) {
         else if (output.format == "number") {
             output.runtimeSize = 4;
         }
+        else if (typeof output.size === "string" && output.size !== undefined && (output.size as string)[0] == "i") {
+            let inputIndex : number = parseInt((output.size as string)[1]);
+            if (isNaN(inputIndex)) {
+                throw "NaNOutputRuntimeSizeDefinition";
+            }
+            if (inputIndex > inputs.length) {
+                throw "OutOfBoundsOutputRuntimeSizeAssignment";
+            }
+            output.runtimeSize = inputs[inputIndex].runtimeSize;
+        }
         else if (output.size === undefined || typeof output.size === "string" && output.size === "max") {
             output.runtimeSize = -1;
             
@@ -315,69 +324,55 @@ let utilFunctions : { [name: string] : (args : (Uint8Array | string | number)[],
     MOD: (arr : number[]) : number => arr[0] % arr[1],
     meminit: (arr : any[]) : number => { arr[0] = new Uint8Array(arr[1] as number); return arr[1]; },
     seq: (arr: any[]) : number => { return 1; },
-    PRG: (arr : number[]) : number => {
-        if (typeof arr[0] == "number") {
-            // if the generator has not been seeded
-            if (Object.keys(generators.gen).indexOf(arr[0].toString()) < 0) {
-                generators.gen[arr[0]] = gen.create(arr[0].toString());
-            }
-            return generators.gen[arr[0]](256);
-        }
+    PRG: (arr : any[]) : number => {
+        let seed : Uint8Array = ConvertToArray(arr[0]);
+        let size : number = arr[1];
+        arr[2] = PRGn(seed, size);
+        return 0;
     },
     PRF: (arr : any[]) : number => {
-        let k : Uint8Array;
-        if (typeof arr[0] == "string" || typeof arr[0] == "number") k = ConvertToArray(arr[0]);
-        else k = (arr[0] as Uint8Array);
-        let g = gen.create(arr[1].toString()); // create g1
-        let kLen : number = k.length * 8;
-        let G : number = 0;
-        for (let i = 0; i < kLen; ++i) {
-            G = g(0xffff);
-            if (((k[Math.floor(i / 8)] >> (i % 8)) & 0x01) == 0x01) {
-                G = (G >> 8) & 0xFF;
-                g = gen.create(G.toString());
-            }
-            else {
-                G = G & 0xFF;
-                g = gen.create(G.toString());
-            }
-        }
-        return G;
+        let k : Uint8Array = ConvertToArray(arr[0]);
+        let seed : Uint8Array = ConvertToArray(arr[1]);
+        let size : number = arr[2];
+        arr[3] = PRF(seed, k, size);
+
+        return size;
     },
-    // PRP: (arr : any[]) : number => {
-    //     let R : Uint8Array;
-    //     let L : Uint8Array;
+    PRP: (arr : any[]) : number => {
+        let R : Uint8Array, L : Uint8Array, RL: Uint8Array;
+        let seed : Uint8Array = ConvertToArray(arr[1]);
 
-    //     if (typeof arr[0] == "string" || typeof arr[0] == "number") R = ConvertToArray(arr[0]);
-    //     else R = arr[0];
-    //     if (typeof arr[1] == "string" || typeof arr[1] == "number") L = ConvertToArray(arr[1]);
-    //     else L = arr[1];
+        RL = ConvertToArray(arr[0]);
+        
+        L = RL.subarray(0, Math.ceil(RL.length / 2));
+        R = RL.subarray(Math.floor(RL.length / 2), RL.length);
 
-    //     if (R.length != L.length) {
-    //         let Lfill = new Uint8Array(Math.max(0, R.length - L.length));
-    //         let Rfill = new Uint8Array(Math.max(0, L.length - R.length));
+        if (RL.length % 2 != 0) { // If odd, split the middle byte
+            L[L.length - 1] = L[L.length - 1] && 0b11110000;
+            R[0] = R[0] && 0b00001111;
+        }
 
-    //         let Rp = new Uint8Array(Math.max(R.length, L.length));
-    //         let Lp = new Uint8Array(Math.max(R.length, L.length));
+        let LR = PRP(seed, L, R);
 
-    //         Rp.set(R, Rp.length - R.length);
-    //         Rp.set(Rfill);
+        let r = new Uint8Array(RL.length);
+        
+        if (RL.length % 2 != 0) { // If odd, join the middle byte
+            r.set(LR[0]);
+            r.set(LR[1], LR[0].length - 1);
+            r[LR[0].length - 1] = (LR[0][LR[0].length - 1] && 0b11110000) || (LR[1][0] && 0b00001111);
+        }
+        else {
+            r.set(LR[0]);
+            r.set(LR[1], LR[0].length);
+        }
 
-    //         Lp.set(L, Lp.length - L.length);
-    //         Lp.set(Lfill);
-    //     }
+        arr[2] = r;
 
-    //     console.log(Rp);
-    //     console.log(Lp);
-
-    //     R = Rp;
-    //     L = Lp;
-
-    //     arr[2] = L;
-    //     arr[3] = R;
-
-    //     return 1;
-    // },
+        return 1;
+    },
+    randbyte: (arr: any[]) : number => {
+        return RAND_byte();
+    },
     prepare_cbc : (arr : any[], reporter) : number => {
         if (typeof arr[1] === "number" || arr[1].length < 16)
             reporter("[WARNING] Your AES key is not 16 bytes long, so it was automatically padded with zeros to meet the correct length requirement, consider using a 16 byte key.");
@@ -613,7 +608,7 @@ function CallLibFunction (lib : IModule, libCall : ILibCall, inputs: ILibInput[]
 export  { 
             RIBlockLibrary, RIBlock, IPort, RIPort, 
             IModule, IResolver, ILibCall, ILibInput, 
-            ptr, generators,
+            ptr,
             CalculateRuntimeSize, ResetRuntimeSize,
             GetRuntime, CallLibFunction, ParseLibCall,
             ConvertToArray, ConvertToNumber

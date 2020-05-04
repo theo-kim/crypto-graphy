@@ -299,6 +299,12 @@ div#console .console-line {
   align-items: stretch;
   padding: 0 8px;
 }
+div#console .console-line.error {
+  color: #e84e4f;
+}
+div#console .console-line.warning {
+  color: #FFEF4A;
+}
 div#console .console-line input {
   background: none;
   border: none;

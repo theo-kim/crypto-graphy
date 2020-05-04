@@ -499,33 +499,58 @@
             }
         }
     },
-    "Pseudo-Randomness" : {
+    "Randomness" : {
+        "Random Byte" : {
+            "operation" : "util.assign(util.randbyte(), 0)",
+            "description": "Get a single truly random byte (current microsecond LSB)",
+            "label": "r",
+            "format": {
+                "size": [50, 50],
+                "inputs": [
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "number",
+                        "label": "Random Byte"
+                    }
+                ]
+            }
+        },
         "Pseudo-Random Generator" : {
-            "operation" : "util.assign(util.PRG(0), 1)",
+            "operation" : "util.PRG(0, 1, 2)",
             "description": "Uses a random seed to generate a pseudo-random byte (8-bits). Not deterministic, running multiple times will yield different values",
             "label": "PRG",
             "format": {
                 "size": [100, 50],
                 "inputs": [
                     {
-                        "side": "left",
-                        "position": 1,
-                        "format": "int",
+                        "side": "top",
+                        "position": 2,
+                        "format": "number",
                         "label": "seed"
+                    },
+                    {
+                        "side": "bottom",
+                        "position": 2,
+                        "format": "number",
+                        "label": "output size"
                     }
                 ],
                 "outputs" : [
                     {
                         "side": "right",
                         "position": 1,
-                        "format": "int",
-                        "label": "Pseudo-random Value"
+                        "format": "bytearr",
+                        "label": "Pseudo-random Value",
+                        "size": "i1"
                     }
                 ]
             }
         },
         "Pseudo-Random Function" : {
-            "operation" : "util.assign(util.PRF(0, 1), 2)",
+            "operation" : "util.PRF(0, 1, 2, 3)",
             "description": "Given a random key and a seed, produce a pseudo-random byte deterministically",
             "label": "PRF",
             "format": {
@@ -540,16 +565,52 @@
                     {
                         "side": "top",
                         "position": 2,
-                        "format": "int",
+                        "format": "number",
                         "label": "seed"
+                    },
+                    {
+                        "side": "bottom",
+                        "position": 2,
+                        "format": "number",
+                        "label": "output size"
                     }
                 ],
                 "outputs" : [
                     {
                         "side": "right",
                         "position": 1,
-                        "format": "int",
+                        "format": "bytearr",
                         "label": "value"
+                    }
+                ]
+            }
+        },
+        "Pseudo-Random Permutation" : {
+            "operation" : "util.PRP(0, 1, 2)",
+            "description": "Produce a permutated (1-to-1) random value for a random seed and key. It returns an array of the same size as the provided key",
+            "label": "PRP",
+            "format": {
+                "size": [100, 50],
+                "inputs": [
+                    {
+                        "side": "left",
+                        "position": 1,
+                        "format": "bytearr",
+                        "label": "Key"
+                    },
+                    {
+                        "side": "top",
+                        "position": 2,
+                        "format": "number",
+                        "label": "Seed"
+                    }
+                ],
+                "outputs" : [
+                    {
+                        "side": "right",
+                        "position": 1,
+                        "format": "bytearr",
+                        "label": "Random Value"
                     }
                 ]
             }
